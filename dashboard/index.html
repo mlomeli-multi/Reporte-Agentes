@@ -3,61 +3,89 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard operativo MLTI</title>
+    <title>Dashboard Ejecutivo MLTI</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">Control operativo</p>
-        <h1>Prioridades, cotizaciones y tiempos</h1>
-      </div>
-      <div class="status">
-        <span id="dataStatus">Cargando datos</span>
-        <time id="generatedAt"></time>
-      </div>
-    </header>
+    <main class="shell">
+      <header class="hero">
+        <div class="brand">
+          <span class="brand-mark">ML</span>
+          <div>
+            <p class="eyebrow">Command center comercial y operativo</p>
+            <h1>Dashboard Ejecutivo MLTI</h1>
+          </div>
+        </div>
+        <div class="status">
+          <span id="dataStatus">Cargando datos</span>
+          <time id="generatedAt"></time>
+        </div>
+      </header>
 
-    <main>
       <section class="kpis" aria-label="Resumen ejecutivo">
-        <article>
+        <article class="kpi-critical">
           <span>Pendientes abiertos</span>
           <strong id="kpiPendientes">-</strong>
+          <small>Acciones vivas en radar</small>
         </article>
         <article>
           <span>Cotizaciones monitoreadas</span>
           <strong id="kpiCotizaciones">-</strong>
+          <small>Pricing, agentes y dudas</small>
         </article>
         <article>
           <span>Historicas vivas</span>
           <strong id="kpiHistoricas">-</strong>
+          <small>Julio/Agosto bajo control</small>
         </article>
         <article>
           <span>Ultimo reporte</span>
           <strong id="kpiUltimo">-</strong>
+          <small id="kpiSheet">Sheet sin datos</small>
         </article>
       </section>
 
-      <section class="split">
-        <div class="panel">
+      <section class="executive-grid">
+        <article class="panel priority-panel">
           <div class="panel-head">
-            <h2>Semaforo operativo</h2>
+            <div>
+              <p class="section-label">Riesgo operativo</p>
+              <h2>Semaforo de prioridades</h2>
+            </div>
             <span>Por criticidad</span>
           </div>
           <div id="critChart" class="bars"></div>
-        </div>
-        <div class="panel">
+        </article>
+
+        <article class="panel priority-panel">
           <div class="panel-head">
-            <h2>Cotizaciones</h2>
+            <div>
+              <p class="section-label">Pipeline comercial</p>
+              <h2>Estado de cotizaciones</h2>
+            </div>
             <span>Por semaforo</span>
           </div>
           <div id="quoteChart" class="bars"></div>
-        </div>
+        </article>
+
+        <article class="panel priority-panel">
+          <div class="panel-head">
+            <div>
+              <p class="section-label">Control de avance</p>
+              <h2>Lectura ejecutiva</h2>
+            </div>
+            <span>Hoy</span>
+          </div>
+          <div id="executiveBrief" class="brief-list"></div>
+        </article>
       </section>
 
       <section class="panel">
         <div class="panel-head">
-          <h2>Pendientes que requieren control</h2>
+          <div>
+            <p class="section-label">Operacion</p>
+            <h2>Pendientes que requieren control</h2>
+          </div>
           <span id="pendientesCount"></span>
         </div>
         <div class="table-wrap">
@@ -78,7 +106,10 @@
 
       <section class="panel">
         <div class="panel-head">
-          <h2>Cotizaciones en seguimiento</h2>
+          <div>
+            <p class="section-label">Cotizaciones</p>
+            <h2>Seguimiento comercial</h2>
+          </div>
           <span id="cotizacionesCount"></span>
         </div>
         <div class="table-wrap">
@@ -100,7 +131,10 @@
 
       <section class="panel">
         <div class="panel-head">
-          <h2>Referencias historicas vivas</h2>
+          <div>
+            <p class="section-label">Memoria historica</p>
+            <h2>Referencias vivas</h2>
+          </div>
           <span id="historicasCount"></span>
         </div>
         <div id="historicasList" class="reference-grid"></div>
@@ -110,4 +144,3 @@
     <script src="app.js"></script>
   </body>
 </html>
-

@@ -31,16 +31,36 @@ const renderBars = (id, data) => {
     ? entries
         .map(([label, count]) => {
           const width = Math.max(4, Math.round((count / max) * 100));
+          const clean = className(label);
           return `
             <div class="bar-row">
               <span>${label.replaceAll("_", " ")}</span>
-              <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+              <div class="bar-track"><div class="bar-fill ${clean}" style="width:${width}%"></div></div>
               <strong>${count}</strong>
             </div>
           `;
         })
         .join("")
     : '<p class="empty">Sin datos.</p>';
+};
+
+const renderBrief = (summary, sourceState) => {
+  const target = document.getElementById("executiveBrief");
+  const critical = summary.pendientes_por_criticidad?.critico || 0;
+  const high = summary.pendientes_por_criticidad?.alto || 0;
+  const redQuotes = summary.cotizaciones_por_semaforo?.rojo || 0;
+  const pendingPricing =
+    summary.cotizaciones_por_estatus?.["pendiente_de_coti._pricing"] ||
+    summary.cotizaciones_por_estatus?.pendiente_pricing ||
+    0;
+  const rows = [
+    ["Prioridad inmediata", `${critical} criticos y ${high} altos en control.`],
+    ["Cotizaciones", `${redQuotes} rojas; ${pendingPricing} pendientes de pricing.`],
+    ["Ultima lectura", sourceState?.last_sheet_scan?.range || "Sin lectura de Sheet registrada."],
+  ];
+  target.innerHTML = rows
+    .map(([title, detail]) => `<div class="brief-item"><strong>${title}</strong><span>${detail}</span></div>`)
+    .join("");
 };
 
 const renderRows = (id, rows, columns) => {
@@ -96,9 +116,11 @@ const loadDashboard = async () => {
   setText("kpiCotizaciones", summary.cotizaciones_monitoreadas ?? "-");
   setText("kpiHistoricas", summary.referencias_historicas_vivas ?? "-");
   setText("kpiUltimo", formatDate(data.source_state?.last_successful_report));
+  setText("kpiSheet", data.source_state?.last_sheet_scan?.tab ? `Sheet ${data.source_state.last_sheet_scan.tab}` : "Sheet sin datos");
 
   renderBars("critChart", summary.pendientes_por_criticidad);
   renderBars("quoteChart", summary.cotizaciones_por_semaforo);
+  renderBrief(summary, data.source_state || {});
 
   const pendientes = sections.pendientes || [];
   const cotizaciones = sections.cotizaciones || [];
@@ -135,4 +157,3 @@ loadDashboard().catch((error) => {
     `<section class="panel"><p class="empty">${String(error.message || error)}</p></section>`
   );
 });
-

@@ -47,6 +47,24 @@
         "accion": "Confirmar avance operativo y ETA final.",
         "ultima_revision": "2026-08-30T16:00:00-06:00",
         "link": ""
+      },
+      {
+        "referencia": "INT00-2026-004",
+        "cliente_actor": "AGENTE PRIORITARIO DEMO",
+        "criticidad": "alto",
+        "pelota": "Comercial / pricing",
+        "accion": "Validar si la tarifa ya salio y actualizar estado interno.",
+        "ultima_revision": "2026-08-30T15:45:00-06:00",
+        "link": ""
+      },
+      {
+        "referencia": "IM-202600-0005",
+        "cliente_actor": "CLIENTE MARITIMO DEMO",
+        "criticidad": "medio",
+        "pelota": "Externo / monitoreo",
+        "accion": "Mantener visible hasta confirmar cierre documental.",
+        "ultima_revision": "2026-08-30T14:20:00-06:00",
+        "link": ""
       }
     ],
     "cotizaciones": [
@@ -60,6 +78,28 @@
         "pelota": "Pricing / comercial",
         "accion": "Confirmar si pricing respondio y enviar tarifa al cliente.",
         "ultima_evidencia": "2026-08-30T16:00:00-06:00"
+      },
+      {
+        "referencia": "INT00-2026-006",
+        "cliente": "CLIENTE DEMO 2",
+        "servicio": "EXW MARITIMO",
+        "usuario": "Usuario demo",
+        "estatus": "Cotizado Pricing",
+        "semaforo": "amarillo",
+        "pelota": "Comercial",
+        "accion": "Confirmar envio final al cliente.",
+        "ultima_evidencia": "2026-08-30T15:10:00-06:00"
+      },
+      {
+        "referencia": "INT00-2026-007",
+        "cliente": "CLIENTE DEMO 3",
+        "servicio": "D2D OTR",
+        "usuario": "Usuario demo",
+        "estatus": "Cotizado Agentes",
+        "semaforo": "verde",
+        "pelota": "Cliente externo",
+        "accion": "Monitorear respuesta o cierre.",
+        "ultima_evidencia": "2026-08-30T13:35:00-06:00"
       }
     ],
     "historicas": [
@@ -70,6 +110,14 @@
         "estado": "viva",
         "criticidad": "alto",
         "ultima_revision": "2026-08-30T16:00:00-06:00"
+      },
+      {
+        "referencia": "INT00-2026-008",
+        "sam": "EA-202600-0008",
+        "cliente": "CLIENTE HISTORICO DEMO 2",
+        "estado": "monitoreo",
+        "criticidad": "medio",
+        "ultima_revision": "2026-08-30T12:00:00-06:00"
       }
     ]
   },

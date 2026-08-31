@@ -1,14 +1,17 @@
 :root {
-  --bg: #f5f7fa;
+  --bg: #eef2f6;
   --panel: #ffffff;
-  --ink: #18202f;
-  --muted: #697386;
-  --line: #dfe4ec;
-  --red: #c2410c;
-  --yellow: #a16207;
-  --green: #15803d;
-  --blue: #2563eb;
-  --teal: #0f766e;
+  --ink: #172033;
+  --muted: #667085;
+  --line: #d9e0ea;
+  --soft: #f8fafc;
+  --red: #b42318;
+  --yellow: #b54708;
+  --green: #027a48;
+  --blue: #175cd3;
+  --teal: #0e7c86;
+  --navy: #111827;
+  --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -19,24 +22,61 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, Arial, Helvetica, sans-serif;
 }
 
-.topbar {
+.shell {
+  display: grid;
+  gap: 18px;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.hero {
   display: flex;
   justify-content: space-between;
   gap: 24px;
-  align-items: flex-end;
-  padding: 28px 32px 20px;
-  border-bottom: 1px solid var(--line);
-  background: #ffffff;
+  align-items: center;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #101828 0%, #193c5a 48%, #0e7c86 100%);
+  box-shadow: var(--shadow);
+  color: #ffffff;
+}
+
+.brand {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.brand-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 800;
 }
 
 .eyebrow {
   margin: 0 0 4px;
-  color: var(--teal);
-  font-size: 13px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
   font-weight: 700;
+  text-transform: uppercase;
+}
+
+.section-label {
+  margin: 0 0 4px;
+  color: var(--teal);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -46,7 +86,7 @@ h2 {
 }
 
 h1 {
-  font-size: 28px;
+  font-size: 30px;
   line-height: 1.2;
 }
 
@@ -59,14 +99,8 @@ h2 {
   gap: 4px;
   min-width: 220px;
   text-align: right;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
-}
-
-main {
-  display: grid;
-  gap: 18px;
-  padding: 22px 32px 36px;
 }
 
 .kpis {
@@ -80,27 +114,48 @@ main {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
 }
 
 .kpis article {
   display: grid;
   gap: 10px;
   padding: 18px;
+  min-height: 130px;
+  border-top: 4px solid transparent;
+}
+
+.kpis article:first-child {
+  border-top-color: var(--red);
+}
+
+.kpis article:nth-child(2) {
+  border-top-color: var(--blue);
+}
+
+.kpis article:nth-child(3) {
+  border-top-color: var(--teal);
+}
+
+.kpis article:nth-child(4) {
+  border-top-color: var(--navy);
 }
 
 .kpis span,
 .panel-head span,
-td {
+td,
+.kpis small {
   color: var(--muted);
 }
 
 .kpis strong {
-  font-size: 28px;
+  color: var(--ink);
+  font-size: 30px;
 }
 
-.split {
+.executive-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr 1fr 1.15fr;
   gap: 18px;
 }
 
@@ -123,7 +178,7 @@ td {
 
 .bar-row {
   display: grid;
-  grid-template-columns: 110px 1fr 36px;
+  grid-template-columns: 122px 1fr 38px;
   gap: 10px;
   align-items: center;
   font-size: 13px;
@@ -140,6 +195,44 @@ td {
   height: 100%;
   min-width: 2px;
   background: var(--blue);
+}
+
+.bar-fill.critico,
+.bar-fill.rojo {
+  background: var(--red);
+}
+
+.bar-fill.alto,
+.bar-fill.amarillo {
+  background: var(--yellow);
+}
+
+.bar-fill.medio,
+.bar-fill.verde {
+  background: var(--green);
+}
+
+.brief-list {
+  display: grid;
+  gap: 10px;
+}
+
+.brief-item {
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+}
+
+.brief-item strong {
+  font-size: 13px;
+}
+
+.brief-item span {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .tag {
@@ -195,6 +288,7 @@ td {
   padding: 11px 10px;
   border-bottom: 1px solid var(--line);
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
 td:first-child,
@@ -237,7 +331,7 @@ th:nth-child(5) {
 }
 
 @media (max-width: 900px) {
-  .topbar,
+  .hero,
   .panel-head {
     align-items: flex-start;
     flex-direction: column;
@@ -248,15 +342,16 @@ th:nth-child(5) {
   }
 
   .kpis,
-  .split,
+  .executive-grid,
   .reference-grid {
     grid-template-columns: 1fr;
   }
 
-  main,
-  .topbar {
-    padding-left: 18px;
-    padding-right: 18px;
+  .shell {
+    padding: 14px;
+  }
+
+  table {
+    min-width: 860px;
   }
 }
-
