@@ -1,3 +1,5 @@
+const nf = new Intl.NumberFormat("es-MX");
+
 const formatDate = (value) => {
   if (!value) return "-";
   const date = new Date(value);
@@ -9,7 +11,12 @@ const formatDate = (value) => {
   }).format(date);
 };
 
-const text = (value) => String(value || "-");
+const valueText = (value) => {
+  const clean = String(value || "").trim();
+  return clean || "-";
+};
+
+const labelText = (value) => valueText(value).replaceAll("_", " ");
 
 const className = (value) =>
   String(value || "")
@@ -20,44 +27,59 @@ const className = (value) =>
     .replace(/^_|_$/g, "");
 
 const setText = (id, value) => {
-  document.getElementById(id).textContent = value;
+  const node = document.getElementById(id);
+  if (node) node.textContent = value;
 };
+
+const setStatus = (message, mode) => {
+  const node = document.getElementById("dataStatus");
+  node.textContent = message;
+  node.className = `status-pill ${mode || ""}`.trim();
+};
+
+const countFrom = (bucket, ...keys) =>
+  keys.reduce((sum, key) => sum + Number(bucket?.[key] || bucket?.[className(key)] || 0), 0);
 
 const renderBars = (id, data) => {
   const target = document.getElementById(id);
-  const entries = Object.entries(data || {}).sort((a, b) => b[1] - a[1]);
-  const max = Math.max(1, ...entries.map(([, count]) => count));
+  const entries = Object.entries(data || {})
+    .filter(([, count]) => Number(count) > 0)
+    .sort((a, b) => Number(b[1]) - Number(a[1]));
+  const max = Math.max(1, ...entries.map(([, count]) => Number(count)));
+
   target.innerHTML = entries.length
     ? entries
         .map(([label, count]) => {
-          const width = Math.max(4, Math.round((count / max) * 100));
-          const clean = className(label);
+          const width = Math.max(4, Math.round((Number(count) / max) * 100));
           return `
             <div class="bar-row">
-              <span>${label.replaceAll("_", " ")}</span>
-              <div class="bar-track"><div class="bar-fill ${clean}" style="width:${width}%"></div></div>
-              <strong>${count}</strong>
+              <span>${labelText(label)}</span>
+              <div class="bar-track"><div class="bar-fill ${className(label)}" style="width:${width}%"></div></div>
+              <strong>${nf.format(count)}</strong>
             </div>
           `;
         })
         .join("")
-    : '<p class="empty">Sin datos.</p>';
+    : '<p class="empty">Sin datos para graficar.</p>';
 };
 
 const renderBrief = (summary, sourceState) => {
   const target = document.getElementById("executiveBrief");
-  const critical = summary.pendientes_por_criticidad?.critico || 0;
-  const high = summary.pendientes_por_criticidad?.alto || 0;
-  const redQuotes = summary.cotizaciones_por_semaforo?.rojo || 0;
+  const critical = countFrom(summary.pendientes_por_criticidad, "critico", "critica", "rojo");
+  const high = countFrom(summary.pendientes_por_criticidad, "alto", "alta", "amarillo");
+  const redQuotes = countFrom(summary.cotizaciones_por_semaforo, "rojo");
   const pendingPricing =
     summary.cotizaciones_por_estatus?.["pendiente_de_coti._pricing"] ||
     summary.cotizaciones_por_estatus?.pendiente_pricing ||
+    summary.cotizaciones_por_estatus?.pendiente_de_pricing ||
     0;
+
   const rows = [
-    ["Prioridad inmediata", `${critical} criticos y ${high} altos en control.`],
-    ["Cotizaciones", `${redQuotes} rojas; ${pendingPricing} pendientes de pricing.`],
-    ["Ultima lectura", sourceState?.last_sheet_scan?.range || "Sin lectura de Sheet registrada."],
+    ["Atencion inmediata", `${nf.format(critical)} criticos y ${nf.format(high)} altos en radar.`],
+    ["Cotizaciones", `${nf.format(redQuotes)} rojas; ${nf.format(pendingPricing)} pendientes de pricing.`],
+    ["Fuente", sourceState?.last_sheet_scan?.range || sourceState?.last_sheet_scan?.tab || "Sin lectura de Sheet registrada."],
   ];
+
   target.innerHTML = rows
     .map(([title, detail]) => `<div class="brief-item"><strong>${title}</strong><span>${detail}</span></div>`)
     .join("");
@@ -67,17 +89,17 @@ const renderRows = (id, rows, columns) => {
   const target = document.getElementById(id);
   target.innerHTML = rows.length
     ? rows
-        .map((row) => {
-          return `<tr>${columns
+        .map(
+          (row) => `<tr>${columns
             .map((column) => {
-              const value = text(row[column.key]);
+              const value = valueText(row[column.key]);
               if (column.tag) return `<td><span class="tag ${className(value)}">${value}</span></td>`;
               return `<td>${value}</td>`;
             })
-            .join("")}</tr>`;
-        })
+            .join("")}</tr>`
+        )
         .join("")
-    : `<tr><td colspan="${columns.length}" class="empty">Sin datos.</td></tr>`;
+    : `<tr><td colspan="${columns.length}" class="empty">Sin registros visibles.</td></tr>`;
 };
 
 const renderHistorical = (rows) => {
@@ -87,10 +109,10 @@ const renderHistorical = (rows) => {
         .map(
           (row) => `
             <article class="reference-card">
-              <strong>${text(row.referencia)}</strong>
-              <span>SAM: ${text(row.sam)}</span>
-              <span>${text(row.cliente)}</span>
-              <span>${text(row.estado)} / ${text(row.criticidad)}</span>
+              <strong>${valueText(row.referencia)}</strong>
+              <span>SAM: ${valueText(row.sam)}</span>
+              <span>${valueText(row.cliente)}</span>
+              <span>${valueText(row.estado)} / ${valueText(row.criticidad)}</span>
             </article>
           `
         )
@@ -98,37 +120,55 @@ const renderHistorical = (rows) => {
     : '<p class="empty">Sin referencias historicas vivas.</p>';
 };
 
+const renderMissingData = () => {
+  setStatus("Sin datos reales", "missing");
+  setText("generatedAt", "Genera dashboard/data/current.json localmente");
+  setText("privacyStatus", "No publicar datos reales sin Cloudflare Access");
+  document.querySelector(".workspace").insertAdjacentHTML(
+    "beforeend",
+    `<section class="empty-state">
+      <strong>Este entorno no tiene datos reales cargados.</strong>
+      <span>Ejecuta el generador local y despliega a Cloudflare Pages solo despues de activar Cloudflare Access. El repositorio publico no debe contener current.json.</span>
+    </section>`
+  );
+};
+
 const loadDashboard = async () => {
-  let response = await fetch("data/current.json", { cache: "no-store" });
+  const response = await fetch("data/current.json", { cache: "no-store" });
   if (!response.ok) {
-    response = await fetch("data/current.sample.json", { cache: "no-store" });
-    setText("dataStatus", "Datos de ejemplo");
-  } else {
-    setText("dataStatus", "Datos locales");
+    renderMissingData();
+    return;
   }
 
   const data = await response.json();
   const summary = data.summary || {};
   const sections = data.sections || {};
+  const sourceState = data.source_state || {};
+  const critical = countFrom(summary.pendientes_por_criticidad, "critico", "critica", "rojo");
+  const high = countFrom(summary.pendientes_por_criticidad, "alto", "alta", "amarillo");
 
+  setStatus("Datos reales cargados", "private");
+  setText("privacyStatus", "Publicacion privada recomendada: Cloudflare Access");
   setText("generatedAt", `Generado: ${formatDate(data.generated_at)}`);
-  setText("kpiPendientes", summary.pendientes_abiertos ?? "-");
-  setText("kpiCotizaciones", summary.cotizaciones_monitoreadas ?? "-");
-  setText("kpiHistoricas", summary.referencias_historicas_vivas ?? "-");
-  setText("kpiUltimo", formatDate(data.source_state?.last_successful_report));
-  setText("kpiSheet", data.source_state?.last_sheet_scan?.tab ? `Sheet ${data.source_state.last_sheet_scan.tab}` : "Sheet sin datos");
+  setText("heroSummary", `${nf.format(critical + high)} prioridades sensibles, ${nf.format(summary.cotizaciones_monitoreadas || 0)} cotizaciones en seguimiento.`);
+  setText("kpiPendientes", nf.format(summary.pendientes_abiertos || 0));
+  setText("kpiUrgentes", `${nf.format(critical)} / ${nf.format(high)}`);
+  setText("kpiCotizaciones", nf.format(summary.cotizaciones_monitoreadas || 0));
+  setText("kpiHistoricas", nf.format(summary.referencias_historicas_vivas || 0));
+  setText("kpiUltimo", `Ultimo reporte: ${formatDate(sourceState.last_successful_report)}`);
+  setText("kpiSheet", sourceState.last_sheet_scan?.tab ? `Sheet ${sourceState.last_sheet_scan.tab}` : "Sheet sin datos");
 
   renderBars("critChart", summary.pendientes_por_criticidad);
   renderBars("quoteChart", summary.cotizaciones_por_semaforo);
-  renderBrief(summary, data.source_state || {});
+  renderBrief(summary, sourceState);
 
   const pendientes = sections.pendientes || [];
   const cotizaciones = sections.cotizaciones || [];
   const historicas = sections.historicas || [];
 
-  setText("pendientesCount", `${pendientes.length} visibles`);
-  setText("cotizacionesCount", `${cotizaciones.length} visibles`);
-  setText("historicasCount", `${historicas.length} visibles`);
+  setText("pendientesCount", `${nf.format(pendientes.length)} visibles`);
+  setText("cotizacionesCount", `${nf.format(cotizaciones.length)} visibles`);
+  setText("historicasCount", `${nf.format(historicas.length)} visibles`);
 
   renderRows("pendientesRows", pendientes, [
     { key: "referencia" },
@@ -151,9 +191,9 @@ const loadDashboard = async () => {
 };
 
 loadDashboard().catch((error) => {
-  setText("dataStatus", "Error al cargar");
-  document.querySelector("main").insertAdjacentHTML(
-    "afterbegin",
-    `<section class="panel"><p class="empty">${String(error.message || error)}</p></section>`
+  setStatus("Error al cargar", "missing");
+  document.querySelector(".workspace").insertAdjacentHTML(
+    "beforeend",
+    `<section class="empty-state"><strong>Error al leer datos.</strong><span>${valueText(error.message || error)}</span></section>`
   );
 });

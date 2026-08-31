@@ -1,0 +1,11 @@
+{
+  "name": "reporte-agentes-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dashboard privado para prioridades Outlook, cotizaciones y memoria historica MLTI.",
+  "scripts": {
+    "data:dashboard": "node scripts/build-dashboard-data.js",
+    "serve:dashboard": "node scripts/serve-dashboard.js",
+    "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare.ps1 -AccessReady"
+  }
+}

@@ -1,19 +1,29 @@
 # Reporte Agentes
 
-Dashboard operativo para seguimiento de prioridades, cotizaciones, referencias historicas y tiempos/calidad.
+Dashboard ejecutivo para seguimiento de prioridades Outlook, cotizaciones, referencias historicas y tiempos/calidad.
 
-## Ver Dashboard
+## Canal real
 
-GitHub Pages:
+El dashboard con datos reales debe publicarse en Cloudflare Pages protegido con Cloudflare Access.
 
-```text
-https://mlomeli-multi.github.io/Reporte-Agentes/
+GitHub se usa solo para guardar codigo y documentacion. Este repositorio no debe contener datos reales de Outlook, Google Sheet, clientes, referencias, links internos ni memorias locales.
+
+## Datos locales
+
+El archivo real se genera localmente:
+
+```powershell
+npm run data:dashboard
 ```
 
-Si Pages todavia no esta activo, habilitarlo en `Settings > Pages` con fuente `GitHub Actions`.
+Salida local:
 
-## Privacidad
+```text
+dashboard/data/current.json
+```
 
-Este repo es publico. No subir datos reales de Outlook, Google Sheet o memorias locales. El dashboard publicado usa `dashboard/data/current.sample.json` como datos demo.
+Ese archivo esta ignorado por Git.
 
-Los datos reales locales se generan en `dashboard/data/current.json`, archivo ignorado por Git.
+## Cloudflare
+
+Ver instrucciones en `CLOUDFLARE.md`.

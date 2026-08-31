@@ -7,137 +7,167 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-    <main class="shell">
-      <header class="hero">
-        <div class="brand">
-          <span class="brand-mark">ML</span>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="Navegacion principal">
+        <div class="logo-lockup">
+          <span class="logo-mark">ML</span>
           <div>
-            <p class="eyebrow">Command center comercial y operativo</p>
-            <h1>Dashboard Ejecutivo MLTI</h1>
+            <strong>MLTI</strong>
+            <span>Control ejecutivo</span>
           </div>
         </div>
-        <div class="status">
-          <span id="dataStatus">Cargando datos</span>
-          <time id="generatedAt"></time>
+        <nav>
+          <a href="#resumen">Resumen</a>
+          <a href="#riesgo">Riesgo</a>
+          <a href="#pendientes">Operacion</a>
+          <a href="#cotizaciones">Cotizaciones</a>
+          <a href="#historicas">Historicas</a>
+        </nav>
+        <div class="sidebar-note">
+          <span id="privacyStatus">Privado: Cloudflare Access requerido</span>
         </div>
-      </header>
+      </aside>
 
-      <section class="kpis" aria-label="Resumen ejecutivo">
-        <article class="kpi-critical">
-          <span>Pendientes abiertos</span>
-          <strong id="kpiPendientes">-</strong>
-          <small>Acciones vivas en radar</small>
-        </article>
-        <article>
-          <span>Cotizaciones monitoreadas</span>
-          <strong id="kpiCotizaciones">-</strong>
-          <small>Pricing, agentes y dudas</small>
-        </article>
-        <article>
-          <span>Historicas vivas</span>
-          <strong id="kpiHistoricas">-</strong>
-          <small>Julio/Agosto bajo control</small>
-        </article>
-        <article>
-          <span>Ultimo reporte</span>
-          <strong id="kpiUltimo">-</strong>
-          <small id="kpiSheet">Sheet sin datos</small>
-        </article>
-      </section>
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Outlook + Cotizaciones + SAM</p>
+            <h1>Dashboard Ejecutivo</h1>
+          </div>
+          <div class="status-stack">
+            <span id="dataStatus" class="status-pill">Cargando datos</span>
+            <time id="generatedAt">-</time>
+          </div>
+        </header>
 
-      <section class="executive-grid">
-        <article class="panel priority-panel">
+        <section id="resumen" class="hero-strip">
+          <div>
+            <p>Lectura actual</p>
+            <h2 id="heroSummary">Sin datos reales cargados</h2>
+          </div>
+          <div class="hero-meta">
+            <span id="kpiSheet">Sheet sin datos</span>
+            <span id="kpiUltimo">-</span>
+          </div>
+        </section>
+
+        <section class="kpis" aria-label="Resumen ejecutivo">
+          <article class="metric-critical">
+            <span>Pendientes abiertos</span>
+            <strong id="kpiPendientes">-</strong>
+            <small>Acciones vivas en radar</small>
+          </article>
+          <article>
+            <span>Criticos / altos</span>
+            <strong id="kpiUrgentes">-</strong>
+            <small>Requieren seguimiento cercano</small>
+          </article>
+          <article>
+            <span>Cotizaciones</span>
+            <strong id="kpiCotizaciones">-</strong>
+            <small>Pricing, agentes y dudas</small>
+          </article>
+          <article>
+            <span>Historicas vivas</span>
+            <strong id="kpiHistoricas">-</strong>
+            <small>Julio/Agosto bajo control</small>
+          </article>
+        </section>
+
+        <section id="riesgo" class="executive-grid">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Riesgo operativo</p>
+                <h2>Semaforo de prioridades</h2>
+              </div>
+              <span>Por criticidad</span>
+            </div>
+            <div id="critChart" class="bars"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Pipeline comercial</p>
+                <h2>Estado de cotizaciones</h2>
+              </div>
+              <span>Por semaforo</span>
+            </div>
+            <div id="quoteChart" class="bars"></div>
+          </article>
+
+          <article class="panel executive-brief-card">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Direccion</p>
+                <h2>Lectura ejecutiva</h2>
+              </div>
+              <span>Hoy</span>
+            </div>
+            <div id="executiveBrief" class="brief-list"></div>
+          </article>
+        </section>
+
+        <section id="pendientes" class="panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Riesgo operativo</p>
-              <h2>Semaforo de prioridades</h2>
+              <p class="section-label">Operacion</p>
+              <h2>Pendientes que requieren control</h2>
             </div>
-            <span>Por criticidad</span>
+            <span id="pendientesCount"></span>
           </div>
-          <div id="critChart" class="bars"></div>
-        </article>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Referencia</th>
+                  <th>Cliente / actor</th>
+                  <th>Criticidad</th>
+                  <th>Pelota</th>
+                  <th>Accion sugerida</th>
+                </tr>
+              </thead>
+              <tbody id="pendientesRows"></tbody>
+            </table>
+          </div>
+        </section>
 
-        <article class="panel priority-panel">
+        <section id="cotizaciones" class="panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Pipeline comercial</p>
-              <h2>Estado de cotizaciones</h2>
+              <p class="section-label">Cotizaciones</p>
+              <h2>Seguimiento comercial</h2>
             </div>
-            <span>Por semaforo</span>
+            <span id="cotizacionesCount"></span>
           </div>
-          <div id="quoteChart" class="bars"></div>
-        </article>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Referencia</th>
+                  <th>Cliente</th>
+                  <th>Servicio</th>
+                  <th>Usuario</th>
+                  <th>Estatus</th>
+                  <th>Accion sugerida</th>
+                </tr>
+              </thead>
+              <tbody id="cotizacionesRows"></tbody>
+            </table>
+          </div>
+        </section>
 
-        <article class="panel priority-panel">
+        <section id="historicas" class="panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Control de avance</p>
-              <h2>Lectura ejecutiva</h2>
+              <p class="section-label">Memoria historica</p>
+              <h2>Referencias vivas</h2>
             </div>
-            <span>Hoy</span>
+            <span id="historicasCount"></span>
           </div>
-          <div id="executiveBrief" class="brief-list"></div>
-        </article>
-      </section>
-
-      <section class="panel">
-        <div class="panel-head">
-          <div>
-            <p class="section-label">Operacion</p>
-            <h2>Pendientes que requieren control</h2>
-          </div>
-          <span id="pendientesCount"></span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Referencia</th>
-                <th>Cliente / actor</th>
-                <th>Criticidad</th>
-                <th>Pelota</th>
-                <th>Accion</th>
-              </tr>
-            </thead>
-            <tbody id="pendientesRows"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-head">
-          <div>
-            <p class="section-label">Cotizaciones</p>
-            <h2>Seguimiento comercial</h2>
-          </div>
-          <span id="cotizacionesCount"></span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Referencia</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Usuario</th>
-                <th>Estatus</th>
-                <th>Accion</th>
-              </tr>
-            </thead>
-            <tbody id="cotizacionesRows"></tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="panel">
-        <div class="panel-head">
-          <div>
-            <p class="section-label">Memoria historica</p>
-            <h2>Referencias vivas</h2>
-          </div>
-          <span id="historicasCount"></span>
-        </div>
-        <div id="historicasList" class="reference-grid"></div>
+          <div id="historicasList" class="reference-grid"></div>
+        </section>
       </section>
     </main>
 
