@@ -25,7 +25,16 @@ node scripts/build-dashboard-data.js
 
 Luego abrir `dashboard/index.html` con un servidor local o publicar el folder `dashboard/` en GitHub Pages si la data ya fue sanitizada.
 
+## GitHub Pages
+
+La publicacion esta preparada con GitHub Actions. Cuando Pages quede habilitado, la URL esperada es:
+
+```text
+https://mlomeli-multi.github.io/Reporte-Agentes/
+```
+
+En el repo, ir a `Settings > Pages` y seleccionar `GitHub Actions` como fuente de publicacion. Despues de eso, cada push a `main` despliega el dashboard.
+
 ## Regla de privacidad
 
 No subir `dashboard/data/current.json` ni `work/*.json` a un repositorio publico. Para GitHub Pages publico, crear una version sanitizada sin links de Outlook, nombres personales sensibles ni detalle comercial.
-
