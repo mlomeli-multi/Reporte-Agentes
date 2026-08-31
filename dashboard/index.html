@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard operativo MLTI</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Control operativo</p>
+        <h1>Prioridades, cotizaciones y tiempos</h1>
+      </div>
+      <div class="status">
+        <span id="dataStatus">Cargando datos</span>
+        <time id="generatedAt"></time>
+      </div>
+    </header>
+
+    <main>
+      <section class="kpis" aria-label="Resumen ejecutivo">
+        <article>
+          <span>Pendientes abiertos</span>
+          <strong id="kpiPendientes">-</strong>
+        </article>
+        <article>
+          <span>Cotizaciones monitoreadas</span>
+          <strong id="kpiCotizaciones">-</strong>
+        </article>
+        <article>
+          <span>Historicas vivas</span>
+          <strong id="kpiHistoricas">-</strong>
+        </article>
+        <article>
+          <span>Ultimo reporte</span>
+          <strong id="kpiUltimo">-</strong>
+        </article>
+      </section>
+
+      <section class="split">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Semaforo operativo</h2>
+            <span>Por criticidad</span>
+          </div>
+          <div id="critChart" class="bars"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Cotizaciones</h2>
+            <span>Por semaforo</span>
+          </div>
+          <div id="quoteChart" class="bars"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Pendientes que requieren control</h2>
+          <span id="pendientesCount"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Referencia</th>
+                <th>Cliente / actor</th>
+                <th>Criticidad</th>
+                <th>Pelota</th>
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody id="pendientesRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Cotizaciones en seguimiento</h2>
+          <span id="cotizacionesCount"></span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Referencia</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Usuario</th>
+                <th>Estatus</th>
+                <th>Accion</th>
+              </tr>
+            </thead>
+            <tbody id="cotizacionesRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Referencias historicas vivas</h2>
+          <span id="historicasCount"></span>
+        </div>
+        <div id="historicasList" class="reference-grid"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+

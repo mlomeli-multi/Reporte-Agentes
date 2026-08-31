@@ -1,0 +1,80 @@
+{
+  "version": "dashboard-v0",
+  "generated_at": "2026-08-30T22:30:00.000Z",
+  "timezone": "America/Mexico_City",
+  "source_state": {
+    "configured_version": "v3.5-memoria-historica-julio-agosto",
+    "last_morning_report": "2026-08-30T07:30:00-06:00",
+    "last_midday_report": "2026-08-30T12:00:00-06:00",
+    "last_closing_report": "2026-08-30T16:00:00-06:00",
+    "last_successful_report": "2026-08-30T16:00:00-06:00",
+    "last_report_type": "cierre",
+    "last_sheet_scan": {
+      "spreadsheet": "COTIZACIONES DEMO",
+      "tab": "Agosto",
+      "range": "Agosto!A1:I50",
+      "active_or_partial_rows": 12,
+      "scanned_at": "2026-08-30T16:00:00-06:00"
+    }
+  },
+  "summary": {
+    "pendientes_abiertos": 8,
+    "cotizaciones_monitoreadas": 12,
+    "referencias_historicas_vivas": 20,
+    "pendientes_por_criticidad": {
+      "critico": 2,
+      "alto": 4,
+      "medio": 2
+    },
+    "cotizaciones_por_semaforo": {
+      "rojo": 3,
+      "amarillo": 6,
+      "verde": 3
+    },
+    "cotizaciones_por_estatus": {
+      "pendiente_de_coti._pricing": 4,
+      "cotizado_pricing": 3,
+      "cotizado_agentes": 5
+    }
+  },
+  "sections": {
+    "pendientes": [
+      {
+        "referencia": "INT00-2026-001 / AA-202600-0001",
+        "cliente_actor": "CLIENTE DEMO",
+        "criticidad": "critico",
+        "pelota": "Operacion / seguimiento interno",
+        "accion": "Confirmar avance operativo y ETA final.",
+        "ultima_revision": "2026-08-30T16:00:00-06:00",
+        "link": ""
+      }
+    ],
+    "cotizaciones": [
+      {
+        "referencia": "INT00-2026-002",
+        "cliente": "AGENTE DEMO",
+        "servicio": "DAP AEREO",
+        "usuario": "Usuario demo",
+        "estatus": "Pendiente de Coti. Pricing",
+        "semaforo": "rojo",
+        "pelota": "Pricing / comercial",
+        "accion": "Confirmar si pricing respondio y enviar tarifa al cliente.",
+        "ultima_evidencia": "2026-08-30T16:00:00-06:00"
+      }
+    ],
+    "historicas": [
+      {
+        "referencia": "INT00-2026-003",
+        "sam": "IM-202600-0003",
+        "cliente": "CLIENTE HISTORICO DEMO",
+        "estado": "viva",
+        "criticidad": "alto",
+        "ultima_revision": "2026-08-30T16:00:00-06:00"
+      }
+    ]
+  },
+  "warnings": [
+    "Este archivo puede contener informacion operativa privada.",
+    "No publicarlo en repositorios publicos sin sanitizar."
+  ]
+}

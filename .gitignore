@@ -1,0 +1,6 @@
+dashboard/data/current.json
+work/
+work/*.json
+outputs/
+.env
+*.log
