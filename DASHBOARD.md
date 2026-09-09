@@ -62,6 +62,9 @@ Objetivo: tener una vista ejecutiva de operaciones, cotizaciones y tiempos/calid
   - Cerrado: `npm run report:check` permite al heartbeat saber si debe correr o responder `DONT_NOTIFY` antes de leer Outlook/Sheet.
   - Cerrado: `npm run report:auto` usa la misma regla, registra estado de ventana y evita generar reportes manuales accidentales fuera de horario.
   - Cerrado: la automatizacion guardada en Codex apunta primero al chequeo previo y no publica a Cloudflare salvo instruccion expresa.
+- Punto 7: publicacion privada automatizable.
+  - Cerrado: `npm run report:auto:deploy` genera solo cuando toca ventana valida y publica en Cloudflare Pages protegido con Access.
+  - Cerrado: el reporte registra si la publicacion a Cloudflare fue exitosa o fallo, sin subir datos reales a GitHub.
 - 6.5.x: regla tecnica de cambio de mes: mes activo como frente principal y meses anteriores solo como historicos vivos.
 
 ## Modelo recomendado
@@ -167,7 +170,8 @@ El flujo operativo ya puede correr con un solo comando local. La corrida hace es
 - regenera `dashboard/data/current.json` con el modelo V1;
 - genera un reporte privado en `work/reports/generated/`;
 - actualiza `work/reporte-automation-state.json`;
-- guarda historial de corridas en `work/dashboard-runs-history.json`.
+- guarda historial de corridas en `work/dashboard-runs-history.json`;
+- si se corre con `--deploy`, publica la foto final a Cloudflare y registra el resultado.
 
 Corrida manual para trabajar o validar:
 
@@ -189,6 +193,14 @@ npm run report:auto
 
 La corrida automatica usa la misma regla que `report:check`: detecta si toca manana, mediodia o cierre, marca reportes adelantados/tardios y responde `DONT_NOTIFY` si el periodo ya fue generado o ya no esta en ventana util.
 
+Corrida automatica por ventana del dia con publicacion privada en Cloudflare:
+
+```powershell
+npm run report:auto:deploy
+```
+
+Este comando solo publica cuando realmente genera reporte. Si `report:check` o la regla interna determinan duplicado/fuera de ventana, termina sin leer fuentes ni desplegar.
+
 Publicar a Cloudflare solo cuando Access ya esta activo y se quiera mandar la foto real al sitio privado:
 
 ```powershell
@@ -206,6 +218,8 @@ powershell -ExecutionPolicy Bypass -File scripts\deploy-cloudflare.ps1 -AccessRe
 ```
 
 El switch `-AccessReady` confirma que la politica de Cloudflare Access ya esta activa. Sin ese switch, el script se detiene.
+
+Cuando ya vienes de `report:auto:deploy`, el flujo usa `-SkipDataBuild` para publicar exactamente la foto final del reporte.
 
 ## Regla de privacidad
 

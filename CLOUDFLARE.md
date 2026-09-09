@@ -38,6 +38,14 @@ powershell -ExecutionPolicy Bypass -File scripts\deploy-cloudflare.ps1 -AccessRe
 
 El script vuelve a generar `dashboard/data/current.json` y despliega el folder `dashboard/` a Cloudflare Pages.
 
+Para que una corrida valida de reporte genere y publique en un solo paso:
+
+```powershell
+npm run report:auto:deploy
+```
+
+Este comando respeta las ventanas del reporte y el control anti duplicado. Si no toca reporte, no publica.
+
 ## Regla de privacidad
 
 No subir a GitHub:

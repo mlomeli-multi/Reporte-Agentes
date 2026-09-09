@@ -399,6 +399,50 @@ const appendRunHistory = (entry) => {
   writeJson("work/dashboard-runs-history.json", history);
 };
 
+const parseCloudflareDeployOutput = (output) => {
+  const url = clean(output.match(/https:\/\/[^\s]+\.pages\.dev[^\s]*/)?.[0]);
+  return {
+    status: "success",
+    at: localIso(new Date(), timezone),
+    provider: "cloudflare_pages",
+    project: "reporte-agentes-mlti",
+    url,
+    access_required: true,
+    output_excerpt: clean(output).slice(-1200),
+  };
+};
+
+const cloudflareDeployFailure = (error) => ({
+  status: "failed",
+  at: localIso(new Date(), timezone),
+  provider: "cloudflare_pages",
+  project: "reporte-agentes-mlti",
+  access_required: true,
+  error: clean(error?.message || error),
+});
+
+const updateDeploymentState = (deployment) => {
+  const state = readJson("work/reporte-automation-state.json", { version: 1, timezone });
+  state.last_cloudflare_deploy = deployment;
+  if (state.last_automation_run && typeof state.last_automation_run === "object") {
+    state.last_automation_run.cloudflare = deployment;
+  }
+  writeJson("work/reporte-automation-state.json", state);
+};
+
+const appendDeploymentSection = (reportFile, deployment) => {
+  const lines = [
+    "",
+    "## Publicacion Cloudflare",
+    `- Estado: ${deployment.status === "success" ? "publicado" : "fallo al publicar"}.`,
+    deployment.url ? `- URL: ${deployment.url}` : "",
+    "- Privacidad: Cloudflare Access requerido antes de ver el dashboard.",
+    deployment.error ? `- Error: ${deployment.error}` : "",
+    "",
+  ].filter(Boolean);
+  fs.appendFileSync(reportFile, lines.join("\n"), "utf8");
+};
+
 const updateState = (type, generatedAt, reportPath, data, decision) => {
   const state = readJson("work/reporte-automation-state.json", { version: 1, timezone });
   const field = periodStateField[type] || "last_manual_report";
@@ -450,10 +494,33 @@ const main = () => {
   const fileName = `reporte-${type}-${dateKey}-${parts.hour}${parts.minute}.md`;
   const reportFile = path.join(reportDir, fileName);
   const markdown = reportMarkdown(data, type, generatedAt, notes);
+  let deployment = null;
+  let deploymentError = null;
 
   if (!dryRun) {
     fs.writeFileSync(reportFile, markdown, "utf8");
     updateState(type, generatedAt, path.relative(root, reportFile), data, decision);
+    notes.push(runLocalScript("Actualizar estado final en dashboard", "scripts/build-dashboard-data.js"));
+
+    if (deploy) {
+      try {
+        const output = runCommand("Publicar en Cloudflare", "powershell", [
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "scripts/deploy-cloudflare.ps1",
+          "-AccessReady",
+          "-SkipDataBuild",
+        ]);
+        deployment = parseCloudflareDeployOutput(output);
+      } catch (error) {
+        deployment = cloudflareDeployFailure(error);
+        deploymentError = error;
+      }
+      updateDeploymentState(deployment);
+      appendDeploymentSection(reportFile, deployment);
+    }
+
     appendRunHistory({
       at: generatedAt,
       type,
@@ -467,16 +534,17 @@ const main = () => {
         alertas: data.executive_digest?.alertas?.length || 0,
         prioridades: data.executive_digest?.prioridades?.length || 0,
       },
+      cloudflare: deployment,
     });
-    notes.push(runLocalScript("Actualizar estado final en dashboard", "scripts/build-dashboard-data.js"));
   }
 
-  if (deploy && !dryRun) {
-    notes.push(runCommand("Publicar en Cloudflare", "powershell", ["-ExecutionPolicy", "Bypass", "-File", "scripts/deploy-cloudflare.ps1", "-AccessReady"]));
+  if (deploymentError) {
+    throw deploymentError;
   }
 
   console.log(`${dryRun ? "Simulacion de reporte" : "Reporte generado"}: ${path.relative(root, reportFile)}`);
   console.log(data.executive_digest?.headline || "Sin headline ejecutivo.");
+  if (deployment?.status === "success") console.log(`Cloudflare publicado: ${deployment.url || "ver panel de Cloudflare"}`);
 };
 
 main();

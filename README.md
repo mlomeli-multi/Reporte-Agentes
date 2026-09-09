@@ -40,6 +40,12 @@ Para usar la ventana del dia sin duplicar manana, mediodia o cierre:
 npm run report:auto
 ```
 
+Para usar la ventana del dia y publicar el dashboard privado en Cloudflare cuando si hubo reporte:
+
+```powershell
+npm run report:auto:deploy
+```
+
 Para que la automatizacion revise si debe correr antes de leer fuentes:
 
 ```powershell
@@ -54,14 +60,14 @@ Para publicar en Cloudflare protegido con Access:
 npm run report:deploy
 ```
 
-No modifica Outlook ni Google Sheet. Solo lee la foto local, actualiza memorias privadas y genera archivos locales.
+No modifica Outlook ni Google Sheet. Solo lee la foto local, actualiza memorias privadas, genera archivos locales y, si usas un comando con `deploy`, publica a Cloudflare protegido con Access.
 
 La automatizacion real usa dos fotos privadas antes de generar el reporte:
 
 - `work/sheet-cotizaciones-snapshot.json`: lectura del Google Sheet.
 - `work/outlook-messages-snapshot.json`: lectura compacta de Outlook.
 
-Ambas estan ignoradas por Git. El heartbeat puede actualizarlas con conectores en modo solo lectura y despues ejecutar `npm run report:auto`.
+Ambas estan ignoradas por Git. El heartbeat puede actualizarlas con conectores en modo solo lectura y despues ejecutar `npm run report:auto:deploy` cuando Access este activo.
 
 ## Cloudflare
 
