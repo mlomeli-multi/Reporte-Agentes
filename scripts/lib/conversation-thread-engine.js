@@ -251,6 +251,15 @@ const inferChainAction = (item = {}) => {
     });
   }
 
+  if (hasSignal(text, /factura|invoice|portal|cobranza|billing/)) {
+    return chainAction({
+      accion_sugerida: `Resolver factura/portal en "${subject}": confirmar si MULTI debe cargar la factura, compartir soporte o responder a cobranza/proveedor.`,
+      accion_tipo: "resolver_factura_portal",
+      accion_reason: "proveedor_pide_factura_o_portal",
+      accion_confidence: "alta",
+    });
+  }
+
   if (hasSignal(text, /falta(?:_|\s)*pod|sin(?:_|\s)*pod|pod(?:_|\s)*pendiente|pending(?:_|\s)*pod|entrega(?:_|\s)*pendiente|falta(?:_|\s)*confirmacion(?:_|\s)*de(?:_|\s)*entrega/)) {
     return chainAction({
       accion_sugerida: `Pedir evidencia final en la cadena "${subject}" y no cerrar memoria/SAM hasta tener entrega o POD claro.`,

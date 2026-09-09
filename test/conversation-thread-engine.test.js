@@ -175,6 +175,19 @@ test("falta de POD pide evidencia y no cierre", () => {
   assert.equal(action.accion_tipo, "pedir_pod_evidencia");
 });
 
+test("factura o portal genera accion documental sin caer en pricing", () => {
+  const action = inferChainAction({
+    actor_tipo: "proveedor",
+    actor_confidence: "alta",
+    primary_operation_ref: "ET-202608-0850",
+    int_origin_ref: "INT08-2026-405",
+    asunto: "FACTURA 274853 / INT08-2026-405 / ET-202608-0850",
+    ultimo_movimiento_resumen: "Proveedor solicita apoyo con factura en portal.",
+  });
+  assert.equal(action.accion_tipo, "resolver_factura_portal");
+  assert.equal(action.accion_confidence, "alta");
+});
+
 test("audita actores mixtos sin forzar validacion si hay cadena accionable clara", () => {
   const selected = {
     thread_key: "cnee",

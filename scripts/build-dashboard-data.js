@@ -641,6 +641,20 @@ const inferActorProfileFromItem = (item) => {
   const subjectFolder = textLower([item.asunto, item.subject, item.cadena_correo, item.carpeta, item.folder, item.folder_path].join(" "));
   const allActorSignals = `${subjectFolder} ${sender} ${text}`;
 
+  if (
+    /factura|invoice|portal|cobranza|billing/.test(`${subjectFolder} ${sender} ${text}`) &&
+    (matchActorCatalog("proveedor", allActorSignals, senderDomain) || /xcf|cobranza|billing/.test(`${senderDomain} ${sender}`))
+  ) {
+    return {
+      actor_tipo: "proveedor",
+      actor_principal: firstText(actorName, "Proveedor"),
+      sender_email: senderEmail,
+      sender_domain: senderDomain,
+      actor_detection_reason: "factura_portal_proveedor",
+      actor_confidence: "alta",
+    };
+  }
+
   const knownCnee = matchActorCatalog("cnee", subjectFolder, senderDomain);
   if (knownCnee || /cnee|consignee/.test(subjectFolder)) {
     const match = knownCnee || { actor_tipo: "cnee", actor_detection_reason: "keyword_cnee_en_asunto_o_carpeta", actor_confidence: "alta" };
@@ -2025,6 +2039,7 @@ const emailThreadReading = (item, lane) => {
 };
 
 const chainRank = (thread) => {
+  const action = normalizedBucketKey(thread.accion_tipo, "");
   const laneRank = {
     cadena_en_alerta: 0,
     cadena_por_validar: 1,
@@ -2042,7 +2057,8 @@ const chainRank = (thread) => {
     pricing: 6,
     actor_externo: 7,
   }[normalizedBucketKey(thread.actor_tipo, "")] ?? 7;
-  return laneRank * 100 + rankSeverity(thread.criticidad || thread.semaforo) * 10 + actorRank;
+  const actionBoost = action === "resolver_factura_portal" ? -40 : 0;
+  return laneRank * 100 + rankSeverity(thread.criticidad || thread.semaforo) * 10 + actorRank + actionBoost;
 };
 
 const threadGroupKeys = (item) => referenceKeys(item);

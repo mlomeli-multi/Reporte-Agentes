@@ -165,6 +165,12 @@ const receivedAt = (message) => firstText(message.receivedDateTime, message.rece
 
 const messageText = (message) => clean([message.subject, message.bodyPreview, message.preview, message.summary].join(" "));
 
+const hasInvoicePortalSignal = (message) => {
+  const text = normalize(messageText(message));
+  const sender = normalize([emailFrom(message), actorFrom(message)].join(" "));
+  return /factura|invoice|portal|cobranza|billing/.test(text) || /cobranza|billing/.test(sender);
+};
+
 const inferMonth = (id, dateText) => {
   const intMatch = clean(id).match(/\bINT(\d{2})-\d{4}-\d{3,4}\b/i);
   if (intMatch) return { code: intMatch[1], name: monthCatalog[intMatch[1]] || "Sin mes claro" };
@@ -186,6 +192,18 @@ const actorProfileFromMessage = (message) => {
   const full = `${subject}_${folder}_${sender}_${text}`;
   const subjectFolder = `${subject}_${folder}`;
   const rawDomain = normalize(senderDomain);
+
+  const invoiceProvider = hasInvoicePortalSignal(message) && (matchActorCatalog("proveedor", full, senderDomain) || /xcf|cobranza/.test(`${rawDomain}_${sender}_${text}`));
+  if (invoiceProvider) {
+    return {
+      actor_tipo: "proveedor",
+      actor_principal: firstText(senderName, "Proveedor"),
+      sender_email: senderEmail,
+      sender_domain: senderDomain,
+      actor_detection_reason: "factura_portal_proveedor",
+      actor_confidence: "alta",
+    };
+  }
 
   const knownCnee = matchActorCatalog("cnee", subjectFolder, senderDomain);
   if (knownCnee || /cnee|consignee/.test(`${subject}_${folder}_${text}`)) {
@@ -265,6 +283,7 @@ const inferEstado = (message) => {
 const inferPelota = (message, criticidad) => {
   const actor = actorFrom(message);
   const text = normalize(messageText(message));
+  if (hasInvoicePortalSignal(message)) return "MULTI / documental-factura";
   if (/pricing|rate|tarifa|cotiz/.test(text)) return "Pricing / MULTI";
   if (/please_confirm|favor_confirmar|confirmar|send|provide|status|update|pre_alert|pod/.test(text)) return "MULTI";
   if (/thanks|thank_you|proceed|ok|confirmed|confirmado/.test(text) && actor) return `${actor} / monitoreo`;
@@ -273,6 +292,7 @@ const inferPelota = (message, criticidad) => {
 
 const inferAction = (message, estado, pelota) => {
   const subject = clean(message.subject);
+  if (hasInvoicePortalSignal(message)) return "Validar factura/portal solicitado por proveedor y confirmar a quien le toca cargar o compartir soporte.";
   if (estado === "cerrado") return "Validar si ya puede cerrarse en memoria o si queda evidencia final pendiente.";
   if (estado === "cotizacion") return "Confirmar siguiente paso de cotizacion: pricing, envio a cliente, duda o cierre.";
   if (estado === "documental") return "Revisar documento/evidencia solicitada y responder con soporte claro.";
@@ -483,7 +503,7 @@ for (const message of flattenMessages(snapshot)) {
     criticidad: previous.criticidad === "critico" ? previous.criticidad : criticidad,
     quien_tiene_la_pelota: previous.quien_tiene_la_pelota || pelota,
     responsable_probable: previous.responsable_probable || pelota,
-    accion_sugerida: previous.accion_sugerida || inferAction(message, estado, pelota),
+    accion_sugerida: inferAction(message, estado, pelota) || previous.accion_sugerida,
     razon_del_pendiente: preview || previous.razon_del_pendiente || "Correo operativo detectado en snapshot de Outlook.",
     estado,
     mes_origen: month.name,
