@@ -224,7 +224,178 @@ const coverageLines = (coverage) => {
   ].filter(Boolean);
 };
 
+const pulseItemTable = (items) =>
+  tableRows(items, [
+    ["Ref", (item) => refId(item)],
+    ["Cliente/actor", (item) => item.cliente || item.cliente_actor || item.actor_origen],
+    ["Estado 12 PM", itemEstado],
+    ["Pelota", itemPelota],
+    ["Accion", itemAccion],
+  ]);
+
+const changePulseTable = (items) =>
+  tableRows(items, [
+    ["Ref", (item) => refId(item)],
+    ["Cambio", (item) => item.tipo_cambio || item.evento || item.historial_lane],
+    ["Actor", (item) => item.actor || item.fuente],
+    ["Lectura", (item) => item.lectura_memoria || item.resumen || item.cambio],
+    ["Fecha", (item) => formatDate(item.at || item.fecha_at)],
+  ]);
+
+const quotePulseTable = (items) =>
+  tableRows(items, [
+    ["Ref", (item) => refId(item)],
+    ["Cliente", (item) => item.cliente],
+    ["Usuario", (item) => item.usuario_sheet || item.usuario_responsable],
+    ["Estado", (item) => item.estado_cotizacion],
+    ["Accion", (item) => item.accion_sugerida || item.accion_siguiente],
+  ]);
+
+const hasAnyKeyword = (item, keywords) => {
+  const text = normalizedKey(
+    [
+      item.tipo_cambio,
+      item.evento,
+      item.historial_lane,
+      item.lectura_memoria,
+      item.resumen,
+      item.cambio,
+      item.motivo_prioridad,
+      item.accion_sugerida,
+      item.accion_siguiente,
+      item.estado,
+      item.estado_operativo,
+      item.estado_cotizacion,
+      item.pelota,
+      item.quien_tiene_la_pelota,
+      item.actor,
+      item.actor_destino,
+      item.actor_responsable,
+    ].filter(Boolean).join(" ")
+  );
+  return keywords.some((keyword) => text.includes(keyword));
+};
+
+const middayReportMarkdown = (data, generatedAt, notes) => {
+  const digest = data.executive_digest || {};
+  const report = digest.reporte || {};
+  const summary = data.summary || {};
+  const tabs = data.tabs || {};
+  const operaciones = tabs.operacion?.items || [];
+  const cotizaciones = tabs.cotizaciones?.items || [];
+  const tiempos = tabs.tiempos_calidad?.items || [];
+  const history = data.history || [];
+  const risks = report.riesgos || [];
+  const riskDetails = report.riesgos_detalle || [];
+  const actionDetails = report.acciones_miguel_detalle || [];
+  const readyDetails = report.acciones_listas_detalle || [];
+  const probableDetails = report.acciones_probables_detalle || [];
+  const validationDetails = report.validaciones_detalle || [];
+  const dataQuality = report.calidad_dato || {};
+  const coverageDetail = report.cobertura_detalle || null;
+  const limitations = report.limitaciones || [];
+  const fallbackReady = actionDetails.filter((item) => itemTrust(item) === "accion_confiable");
+  const fallbackProbable = actionDetails.filter((item) => ["accion_probable", "monitoreo_controlado"].includes(itemTrust(item)));
+  const fallbackValidation = actionDetails.filter((item) => ["validar_antes", "sin_evidencia_suficiente"].includes(itemTrust(item)));
+  const readyRows = (readyDetails.length ? readyDetails : fallbackReady).slice(0, 4);
+  const probableRows = (probableDetails.length ? probableDetails : fallbackProbable).slice(0, 4);
+  const validationRows = (validationDetails.length ? validationDetails : fallbackValidation).slice(0, 4);
+  const dateKey = localDateKey(new Date(generatedAt), timezone);
+  const todayHistory = history.filter((item) => {
+    const date = new Date(item.at || item.fecha_at || "");
+    return !Number.isNaN(date.getTime()) && localDateKey(date, timezone) === dateKey;
+  });
+  const changesSource = todayHistory.length ? todayHistory : history;
+  const changes = changesSource.slice(0, 8);
+  const urgentChanges = changesSource
+    .filter((item) => hasAnyKeyword(item, ["nuevo", "empeoro", "urgente", "presion", "bloqueo", "rojo", "critico"]))
+    .slice(0, 5);
+  const topOps = operaciones
+    .filter((item) => item.es_prioridad_reporte === true && item.estado_operativo !== "cotizacion_activa" && item.cola_trabajo !== "pelota_pricing")
+    .slice(0, 7);
+  const teamRows = [...validationRows, ...probableRows, ...topOps]
+    .filter((item) => hasAnyKeyword(item, ["multi", "ops", "operacion", "documental", "pricing", "equipo", "sam", "factura", "portal"]))
+    .slice(0, 4);
+  const quoteRows = cotizaciones
+    .filter((item) => item.es_prioridad_reporte === true || ["pendiente_pricing", "pricing_respondio_falta_enviar", "por_validar"].includes(normalizedKey(item.estado_cotizacion)))
+    .slice(0, 7);
+  const timeRows = tiempos
+    .filter((item) => ["rojo", "gris", "amarillo"].includes(item.semaforo))
+    .slice(0, 5);
+  const riskRows = riskDetails.slice(0, 4);
+
+  return [
+    `# Corte ejecutivo MLTI - mediodia`,
+    "",
+    `Generado: ${formatDate(generatedAt)} (${timezone})`,
+    "Tipo: mediodia",
+    "",
+    "## Resumen ejecutivo de mediodia",
+    bullet(`Cambios recientes visibles: ${changes.length}. Urgencias nuevas o deterioros detectados: ${urgentChanges.length}.`),
+    bullet(`Acciones listas para Miguel: ${readyRows.length}; acciones probables: ${probableRows.length}; validaciones cortas: ${validationRows.length}.`),
+    bullet(`Cotizaciones pendientes reales de Pricing: ${summary.cotizaciones_pendientes_reales ?? 0} (${summary.cotizaciones_pendientes_mes_actual ?? 0} del mes actual, ${summary.cotizaciones_pendientes_historicas ?? 0} historicas).`),
+    bullet(`Tiempos/calidad en amarillo/rojo/gris mostrados en pulso: ${timeRows.length}; alertas rojas totales: ${summary.respuestas_rojas ?? 0}.`),
+    bullet(`Backlog historico separado: ${summary.backlog_historico ?? 0}; no se repite completo en mediodia salvo urgencia o cambio.`),
+    "",
+    "## Cambios desde la manana",
+    changes.length ? changePulseTable(changes) : "_Sin cambios visibles desde la manana con el snapshot actual._",
+    "",
+    "## Semaforo de criticos y altos",
+    topOps.length ? pulseItemTable(topOps) : "_Sin operaciones criticas/altas nuevas para empujar en este corte._",
+    "",
+    "## Lo que Miguel debe empujar antes de comer",
+    readyRows.length
+      ? trustItemTable(readyRows)
+      : bullet("Sin acciones marcadas como 100% listas; usar validaciones antes de mover al equipo o cliente."),
+    "",
+    "## Lo que debe pedir a equipo/ops",
+    teamRows.length
+      ? pulseItemTable(teamRows)
+      : bullet("Sin pedidos claros a equipo/ops con evidencia suficiente en este corte."),
+    "",
+    "## Cotizaciones que deben salir hoy",
+    quoteRows.length ? quotePulseTable(quoteRows) : "_Sin cotizaciones prioritarias visibles para mover antes de la tarde._",
+    "",
+    "## Urgencias nuevas detectadas",
+    urgentChanges.length ? changePulseTable(urgentChanges) : bullet("Sin urgencias nuevas o deterioros claros en el historial reciente."),
+    "",
+    "## Riesgos que siguen igual",
+    riskRows.length ? riskTable(riskRows) : (risks.length ? risks.slice(0, 4).map(bullet).join("\n") : bullet("Sin riesgos adicionales detectados con la regla actual.")),
+    "",
+    "## Tiempos y calidad",
+    tableRows(timeRows, [
+      ["Ref", (item) => refId(item)],
+      ["Vista", (item) => item.lane_tiempo || item.tipo],
+      ["Semaforo", (item) => item.semaforo],
+      ["Responsable", (item) => item.actor_destino || item.actor_responsable],
+      ["Lectura", (item) => item.lectura_tiempo || item.observacion],
+    ]),
+    "",
+    "## Cobertura corta",
+    ...(report.cobertura?.slice(0, 3).map(bullet) || []),
+    ...coverageLines(coverageDetail).slice(0, 4).map(bullet),
+    bullet(`Operaciones vivas: ${summary.operaciones_vivas || 0}; prioridad hoy: ${summary.prioridad_hoy || 0}.`),
+    bullet(`Cotizaciones vivas: ${summary.cotizaciones_vivas || 0}; pendientes reales Pricing: ${summary.cotizaciones_pendientes_reales || 0}.`),
+    bullet(dataQuality.regla_reporte || "Regla: mediodia muestra solo cambios, urgencias, empujes y cotizaciones accionables."),
+    bullet(
+      todayHistory.length
+        ? "Cambios filtrados al dia local del corte; no se repite historial anterior salvo que siga como prioridad viva."
+        : "Sin historial fechado del dia local; se usa historial reciente como respaldo y debe leerse como proxy, no como delta estricto de manana."
+    ),
+    ...notes.map(bullet),
+    ...limitations.slice(0, 3).map((item) => bullet(`Limitacion: ${item}`)),
+    "",
+    "## Privacidad",
+    "- Reporte generado localmente desde memorias privadas.",
+    "- No se modifico Outlook ni Google Sheet.",
+    "- No publicar este archivo en GitHub publico si contiene datos reales.",
+    "",
+  ].join("\n");
+};
+
 const reportMarkdown = (data, type, generatedAt, notes) => {
+  if (type === "mediodia") return middayReportMarkdown(data, generatedAt, notes);
+
   const digest = data.executive_digest || {};
   const report = digest.reporte || {};
   const summary = data.summary || {};
