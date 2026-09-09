@@ -62,6 +62,7 @@ Objetivo: tener una vista ejecutiva de operaciones, cotizaciones y tiempos/calid
   - Cerrado: `npm run report:check` permite al heartbeat saber si debe correr o responder `DONT_NOTIFY` antes de leer Outlook/Sheet.
   - Cerrado: `npm run report:auto` usa la misma regla, registra estado de ventana y evita generar reportes manuales accidentales fuera de horario.
   - Cerrado: la automatizacion guardada en Codex apunta primero al chequeo previo y no publica a Cloudflare salvo instruccion expresa.
+  - Cerrado: la automatizacion V3.9 diferencia formato por periodo: manana/cierre completos y mediodia como pulso corto sin repetir backlog ni radar completo.
 - Punto 7: publicacion privada automatizable.
   - Cerrado: `npm run report:auto:deploy` genera solo cuando toca ventana valida y publica en Cloudflare Pages protegido con Access.
   - Cerrado: el reporte registra si la publicacion a Cloudflare fue exitosa o fallo, sin subir datos reales a GitHub.
