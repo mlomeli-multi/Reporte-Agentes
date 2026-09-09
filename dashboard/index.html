@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard Ejecutivo MLTI</title>
+    <title>Mini TMS Ejecutivo MLTI</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -12,27 +12,29 @@
         <div class="logo-lockup">
           <span class="logo-mark">ML</span>
           <div>
-            <strong>MLTI</strong>
-            <span>Control ejecutivo</span>
+            <strong>Mini TMS</strong>
+            <span>MLTI privado</span>
           </div>
         </div>
         <nav>
-          <a href="#resumen">Resumen</a>
+          <a href="#mando">Mando</a>
+          <a href="#reporte">Reporte</a>
           <a href="#riesgo">Riesgo</a>
-          <a href="#pendientes">Operacion</a>
-          <a href="#cotizaciones">Cotizaciones</a>
-          <a href="#historicas">Historicas</a>
+          <a href="#enfoque">Enfoque</a>
+          <a href="#trabajo">Trabajo</a>
+          <a href="#historial">Historial</a>
         </nav>
         <div class="sidebar-note">
+          <strong>Acceso</strong>
           <span id="privacyStatus">Privado: Cloudflare Access requerido</span>
         </div>
       </aside>
 
       <section class="workspace">
-        <header class="topbar">
+        <header id="mando" class="topbar">
           <div>
-            <p class="eyebrow">Outlook + Cotizaciones + SAM</p>
-            <h1>Dashboard Ejecutivo</h1>
+            <p class="eyebrow">Outlook + Google Sheet + memoria viva</p>
+            <h1>Mini TMS Ejecutivo</h1>
           </div>
           <div class="status-stack">
             <span id="dataStatus" class="status-pill">Cargando datos</span>
@@ -40,37 +42,162 @@
           </div>
         </header>
 
-        <section id="resumen" class="hero-strip">
-          <div>
-            <p>Lectura actual</p>
-            <h2 id="heroSummary">Sin datos reales cargados</h2>
-          </div>
-          <div class="hero-meta">
-            <span id="kpiSheet">Sheet sin datos</span>
-            <span id="kpiUltimo">-</span>
-          </div>
+        <section class="command-center" aria-label="Lectura ejecutiva">
+          <article class="command-main">
+            <div>
+              <p class="section-label">Corte operativo</p>
+              <h2 id="heroSummary">Sin datos reales cargados</h2>
+            </div>
+            <div class="command-meta">
+              <span id="kpiSheet">Sheet sin datos</span>
+              <span id="kpiUltimo">-</span>
+            </div>
+          </article>
+          <article class="command-side">
+            <span>Modo de trabajo</span>
+            <strong id="reportWindow">Control privado</strong>
+            <small>Codigo en GitHub; datos reales protegidos fuera del repo publico.</small>
+          </article>
+        </section>
+
+        <section class="executive-cockpit" aria-label="Mesa de mando ejecutiva">
+          <article class="panel cockpit-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Mesa de mando</p>
+                <h2>Que atender primero</h2>
+              </div>
+              <span id="cockpitTotal">-</span>
+            </div>
+            <div id="cockpitQueues" class="cockpit-grid"></div>
+          </article>
+
+          <article class="panel memory-panel">
+            <div class="panel-head compact-head">
+              <div>
+                <p class="section-label">Memoria limpia</p>
+                <h2>Calidad del historial</h2>
+              </div>
+              <span id="memoryCleanScore">-</span>
+            </div>
+            <div id="memoryCleanStats" class="memory-stats"></div>
+            <p id="memoryCleanNote" class="memory-note">Esperando datos de historial.</p>
+          </article>
+        </section>
+
+        <section id="reporte" class="daily-command" aria-label="Mando ejecutivo del dia">
+          <article class="panel decision-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Mando del dia</p>
+                <h2>Alertas accionables</h2>
+              </div>
+              <span id="commandAlertCount">-</span>
+            </div>
+            <div id="executiveAlerts" class="alert-grid"></div>
+          </article>
+
+          <article class="panel report-preview-card">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Reporte preparado</p>
+                <h2 id="reportDraftTitle">Resumen ejecutivo</h2>
+              </div>
+              <button id="copyReportText" type="button" class="copy-report">Copiar reporte</button>
+            </div>
+            <div id="reportDraft" class="report-draft"></div>
+          </article>
         </section>
 
         <section class="kpis" aria-label="Resumen ejecutivo">
           <article class="metric-critical">
-            <span>Pendientes abiertos</span>
-            <strong id="kpiPendientes">-</strong>
-            <small>Acciones vivas en radar</small>
+            <span>Operaciones vivas</span>
+            <strong id="kpiOperaciones">-</strong>
+            <small>Frente activo / total visible</small>
           </article>
           <article>
             <span>Criticos / altos</span>
             <strong id="kpiUrgentes">-</strong>
-            <small>Requieren seguimiento cercano</small>
+            <small>Foco de seguimiento de hoy</small>
           </article>
           <article>
-            <span>Cotizaciones</span>
+            <span>Cotizaciones vivas</span>
             <strong id="kpiCotizaciones">-</strong>
-            <small>Pricing, agentes y dudas</small>
+            <small>Pricing, cliente o MULTI</small>
           </article>
           <article>
-            <span>Historicas vivas</span>
-            <strong id="kpiHistoricas">-</strong>
-            <small>Julio/Agosto bajo control</small>
+            <span>Alertas de respuesta</span>
+            <strong id="kpiTiempos">-</strong>
+            <small>Tiempos o calidad en rojo</small>
+          </article>
+        </section>
+
+        <section class="diagnostic-strip" aria-label="Salud del sistema">
+          <article>
+            <span>Tamano tablas</span>
+            <strong id="healthTables">-</strong>
+            <small>Operacion / tiempos / cotizaciones / historial</small>
+          </article>
+          <article>
+            <span>Calidad de evidencia</span>
+            <strong id="healthEvidence">-</strong>
+            <small>Registros con evidencia incierta</small>
+          </article>
+          <article>
+            <span>Desfase operativo</span>
+            <strong id="healthSync">-</strong>
+            <small>Sheet contra Outlook/memoria</small>
+          </article>
+          <article>
+            <span>Criterio dominante</span>
+            <strong id="healthCriteria">-</strong>
+            <small>Lo que mas mueve el riesgo hoy</small>
+          </article>
+        </section>
+
+        <section class="trust-strip" aria-label="Confianza de lectura">
+          <article class="trust-card ready">
+            <span>Accion confiable</span>
+            <strong id="trustSafe">-</strong>
+            <small>Evidencia y criterio listos para ejecutar</small>
+          </article>
+          <article class="trust-card probable">
+            <span>Accion probable</span>
+            <strong id="trustProbable">-</strong>
+            <small>Util, pero conviene leer detalle</small>
+          </article>
+          <article class="trust-card validate">
+            <span>Validar antes</span>
+            <strong id="trustValidate">-</strong>
+            <small>Cadena, actor o sync requieren revision</small>
+          </article>
+          <article class="trust-card incomplete">
+            <span>Sin evidencia</span>
+            <strong id="trustNoEvidence">-</strong>
+            <small>No convertir en accion segura</small>
+          </article>
+        </section>
+
+        <section class="quality-board" aria-label="Explicabilidad del reporte">
+          <article class="quality-summary">
+            <div class="panel-head compact-head">
+              <div>
+                <p class="section-label">Explicabilidad</p>
+                <h2>Por que aparece en el reporte</h2>
+              </div>
+              <span id="qualityVisible">-</span>
+            </div>
+            <div id="qualityMetrics" class="quality-metrics"></div>
+          </article>
+          <article class="quality-queue">
+            <div class="panel-head compact-head">
+              <div>
+                <p class="section-label">Calidad del dato</p>
+                <h2>Registros que conviene revisar</h2>
+              </div>
+              <span id="qualityQueueCount">-</span>
+            </div>
+            <div id="qualityQueue" class="quality-list"></div>
           </article>
         </section>
 
@@ -79,9 +206,9 @@
             <div class="panel-head">
               <div>
                 <p class="section-label">Riesgo operativo</p>
-                <h2>Semaforo de prioridades</h2>
+                <h2>Prioridad por criticidad</h2>
               </div>
-              <span>Por criticidad</span>
+              <span>Operacion</span>
             </div>
             <div id="critChart" class="bars"></div>
           </article>
@@ -92,7 +219,7 @@
                 <p class="section-label">Pipeline comercial</p>
                 <h2>Estado de cotizaciones</h2>
               </div>
-              <span>Por semaforo</span>
+              <span>Cotizaciones</span>
             </div>
             <div id="quoteChart" class="bars"></div>
           </article>
@@ -103,70 +230,601 @@
                 <p class="section-label">Direccion</p>
                 <h2>Lectura ejecutiva</h2>
               </div>
-              <span>Hoy</span>
+              <span>Ahora</span>
             </div>
             <div id="executiveBrief" class="brief-list"></div>
           </article>
         </section>
 
-        <section id="pendientes" class="panel">
-          <div class="panel-head">
-            <div>
-              <p class="section-label">Operacion</p>
-              <h2>Pendientes que requieren control</h2>
+        <section id="enfoque" class="focus-layout">
+          <article class="panel attention-panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Enfoque inmediato</p>
+                <h2>Lo que no debe perderse</h2>
+              </div>
+              <span id="focusCount"></span>
             </div>
-            <span id="pendientesCount"></span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Referencia</th>
-                  <th>Cliente / actor</th>
-                  <th>Criticidad</th>
-                  <th>Pelota</th>
-                  <th>Accion sugerida</th>
-                </tr>
-              </thead>
-              <tbody id="pendientesRows"></tbody>
-            </table>
-          </div>
+            <div id="focusList" class="focus-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="section-label">Mapa de trabajo</p>
+                <h2>Operacion por decision</h2>
+              </div>
+              <span>Volumen</span>
+            </div>
+            <div id="opsPipeline" class="stage-grid"></div>
+          </article>
         </section>
 
-        <section id="cotizaciones" class="panel">
+        <section id="trabajo" class="panel workbench">
           <div class="panel-head">
             <div>
-              <p class="section-label">Cotizaciones</p>
-              <h2>Seguimiento comercial</h2>
+              <p class="section-label">Centro de trabajo</p>
+              <h2>Tres vistas operativas</h2>
             </div>
-            <span id="cotizacionesCount"></span>
+            <div class="workbench-tools">
+              <span id="workbenchCount">-</span>
+              <div class="density-toggle" aria-label="Densidad de tablas">
+                <button type="button" data-density-option="comfortable" class="active">Comoda</button>
+                <button type="button" data-density-option="compact">Compacta</button>
+              </div>
+            </div>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Referencia</th>
-                  <th>Cliente</th>
-                  <th>Servicio</th>
-                  <th>Usuario</th>
-                  <th>Estatus</th>
-                  <th>Accion sugerida</th>
-                </tr>
-              </thead>
-              <tbody id="cotizacionesRows"></tbody>
-            </table>
+
+          <div class="quick-views" aria-label="Vistas rapidas ejecutivas">
+            <button type="button" data-view-preset="atender-ahora">
+              <span>Atender ahora</span>
+              <strong id="preset-atender-ahora">-</strong>
+            </button>
+            <button type="button" data-view-preset="seguimiento-hoy">
+              <span>Seguimiento hoy</span>
+              <strong id="preset-seguimiento-hoy">-</strong>
+            </button>
+            <button type="button" data-view-preset="criticos">
+              <span>Criticos hoy</span>
+              <strong id="preset-criticos">-</strong>
+            </button>
+            <button type="button" data-view-preset="mes-actual">
+              <span>Mes actual</span>
+              <strong id="preset-mes-actual">-</strong>
+            </button>
+            <button type="button" data-view-preset="historico-vivo">
+              <span>Historico vivo</span>
+              <strong id="preset-historico-vivo">-</strong>
+            </button>
+            <button type="button" data-view-preset="pricing-pendiente">
+              <span>Pricing pendiente</span>
+              <strong id="preset-pricing-pendiente">-</strong>
+            </button>
+            <button type="button" data-view-preset="pricing-falta-enviar">
+              <span>Pricing falta enviar</span>
+              <strong id="preset-pricing-falta-enviar">-</strong>
+            </button>
+            <button type="button" data-view-preset="cliente-dudas">
+              <span>Cliente con dudas</span>
+              <strong id="preset-cliente-dudas">-</strong>
+            </button>
+            <button type="button" data-view-preset="revisar-inconsistencia">
+              <span>Revisar inconsistencia</span>
+              <strong id="preset-revisar-inconsistencia">-</strong>
+            </button>
+            <button type="button" data-view-preset="validar-antes">
+              <span>Validar antes</span>
+              <strong id="preset-validar-antes">-</strong>
+            </button>
+            <button type="button" data-view-preset="sheet-desfasado">
+              <span>Sheet desfasado</span>
+              <strong id="preset-sheet-desfasado">-</strong>
+            </button>
+            <button type="button" data-view-preset="respuestas-rojas">
+              <span>Respuestas rojas</span>
+              <strong id="preset-respuestas-rojas">-</strong>
+            </button>
+            <button type="button" data-view-preset="pendiente-miguel">
+              <span>Pendiente Miguel</span>
+              <strong id="preset-pendiente-miguel">-</strong>
+            </button>
+            <button type="button" data-view-preset="pendiente-cliente">
+              <span>Pendiente cliente</span>
+              <strong id="preset-pendiente-cliente">-</strong>
+            </button>
           </div>
+
+          <div class="tabbar" role="tablist" aria-label="Vistas principales del Mini TMS">
+            <button id="tab-operacion" class="tab-button active" type="button" role="tab" aria-selected="true" aria-controls="panel-operacion" data-tab="operacion">
+              <span>Operacion</span>
+              <strong id="operacionCount">-</strong>
+            </button>
+            <button id="tab-tiempos" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-tiempos" data-tab="tiempos">
+              <span>Tiempos / calidad</span>
+              <strong id="tiemposCount">-</strong>
+            </button>
+            <button id="tab-cotizaciones" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-cotizaciones" data-tab="cotizaciones">
+              <span>Cotizaciones</span>
+              <strong id="cotizacionesCount">-</strong>
+            </button>
+          </div>
+
+          <section id="panel-operacion" class="tab-panel active" role="tabpanel" aria-labelledby="tab-operacion" data-panel="operacion">
+            <div class="view-summary">
+              <div>
+                <h3>Referencias vivas</h3>
+                <p>Proceso actual, actor responsable, pelota y siguiente accion. Abre en frente activo; el historico queda consultable sin ensuciar la prioridad.</p>
+              </div>
+              <span id="operacionViewMeta">-</span>
+            </div>
+            <div id="operationLanes" class="operation-lanes" aria-label="Vistas operativas de operacion"></div>
+            <div class="operation-insights" aria-label="Lectura ejecutiva de operacion">
+              <article>
+                <span>Frente activo</span>
+                <strong id="opsActiveFront">-</strong>
+                <small>Accion o seguimiento real para hoy</small>
+              </article>
+              <article>
+                <span>Historico en radar</span>
+                <strong id="opsHistoricalRadar">-</strong>
+                <small>Memoria viva sin competir con hoy</small>
+              </article>
+              <article>
+                <span>Por validar</span>
+                <strong id="opsValidate">-</strong>
+                <small>Trazabilidad, SAM o evidencia incompleta</small>
+              </article>
+              <article>
+                <span>Espera externa</span>
+                <strong id="opsExternalWait">-</strong>
+                <small>Cliente, agente o tercero con la pelota</small>
+              </article>
+            </div>
+            <div class="chain-review-board" aria-label="Auditoria ejecutiva de cadenas">
+              <section class="chain-review-summary">
+                <div class="panel-head compact-head">
+                  <div>
+                    <p class="section-label">Auditoria de cadenas</p>
+                    <h3>Validar antes de accionar</h3>
+                  </div>
+                  <span id="chainReviewCount">-</span>
+                </div>
+                <div id="chainReviewMetrics" class="chain-review-metrics"></div>
+              </section>
+              <section class="chain-review-queue">
+                <div class="panel-head compact-head">
+                  <div>
+                    <p class="section-label">Cola de revision</p>
+                    <h3>Cadenas con lectura delicada</h3>
+                  </div>
+                  <span id="chainReviewVisible">-</span>
+                </div>
+                <div id="chainReviewQueue" class="chain-review-list"></div>
+              </section>
+            </div>
+            <div class="filter-toolbar" aria-label="Filtros de operacion">
+              <label class="search-field">
+                <span>Buscar</span>
+                <input type="search" placeholder="Referencia, cliente, actor o accion" data-filter-search="operacion">
+              </label>
+              <label>
+                <span>Vista</span>
+                <select data-filter-table="operacion" data-filter-field="vista_operativa"></select>
+              </label>
+              <label>
+                <span>Criticidad</span>
+                <select data-filter-table="operacion" data-filter-field="criticidad"></select>
+              </label>
+              <label>
+                <span>Periodo</span>
+                <select data-filter-table="operacion" data-filter-field="periodo_trabajo"></select>
+              </label>
+              <label>
+                <span>Mes</span>
+                <select data-filter-table="operacion" data-filter-field="mes_origen"></select>
+              </label>
+              <label>
+                <span>Estado</span>
+                <select data-filter-table="operacion" data-filter-field="estado_operativo"></select>
+              </label>
+              <label>
+                <span>Decision</span>
+                <select data-filter-table="operacion" data-filter-field="decision_ejecutiva"></select>
+              </label>
+              <label>
+                <span>Cola</span>
+                <select data-filter-table="operacion" data-filter-field="cola_trabajo"></select>
+              </label>
+              <label>
+                <span>Modalidad</span>
+                <select data-filter-table="operacion" data-filter-field="modalidad"></select>
+              </label>
+              <label>
+                <span>Equipo</span>
+                <select data-filter-table="operacion" data-filter-field="responsable_equipo"></select>
+              </label>
+              <label>
+                <span>Pelota</span>
+                <select data-filter-table="operacion" data-filter-field="pelota"></select>
+              </label>
+              <label>
+                <span>Frescura</span>
+                <select data-filter-table="operacion" data-filter-field="frescura"></select>
+              </label>
+              <label>
+                <span>Lectura</span>
+                <select data-filter-table="operacion" data-filter-field="lectura_confianza"></select>
+              </label>
+              <label>
+                <span>Salud TMS</span>
+                <select data-filter-table="operacion" data-filter-field="estado_tms_operacion"></select>
+              </label>
+              <label>
+                <span>Auditoria</span>
+                <select data-filter-table="operacion" data-filter-field="auditoria_cadenas_status"></select>
+              </label>
+              <button type="button" class="clear-filters" data-filter-clear="operacion">Limpiar</button>
+            </div>
+            <div class="active-filters" data-active-filters="operacion"></div>
+            <div class="table-wrap">
+              <table class="executive-table">
+                <thead>
+                  <tr>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="referencia">Embarque / INT <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="cliente">Cliente / actor <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="decision">Decision <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="estado">Estado / riesgo <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="pelota">Pelota <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="accion">Accion sugerida <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="operacion" data-sort-key="actualizado">Actualizado <span data-sort-indicator></span></button></th>
+                    <th class="detail-heading">Detalle</th>
+                  </tr>
+                </thead>
+                <tbody id="operacionRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="panel-tiempos" class="tab-panel" role="tabpanel" aria-labelledby="tab-tiempos" data-panel="tiempos" hidden>
+            <div class="view-summary">
+              <div>
+                <h3>Tiempos y calidad</h3>
+                <p>Mediciones de respuesta, semaforo y observaciones de mejora.</p>
+              </div>
+              <span id="tiemposViewMeta">-</span>
+            </div>
+            <div class="time-insights" aria-label="Resumen de tiempos y calidad">
+              <article>
+                <span>Cliente a MULTI</span>
+                <strong id="timeAvgClient">-</strong>
+                <small>Promedio de primera respuesta visible</small>
+              </article>
+              <article>
+                <span>MULTI a Pricing</span>
+                <strong id="timeAvgPricing">-</strong>
+                <small>Tiempo promedio de pricing/proveedor</small>
+              </article>
+              <article>
+                <span>Rojos abiertos</span>
+                <strong id="timeRedOpen">-</strong>
+                <small>Fuera de objetivo o sin cierre claro</small>
+              </article>
+              <article>
+                <span>Sin medicion</span>
+                <strong id="timeGray">-</strong>
+                <small>Falta evidencia para medir bien</small>
+              </article>
+            </div>
+            <div id="timeLanes" class="time-lanes" aria-label="Vistas ejecutivas de tiempos"></div>
+            <div class="time-board" aria-label="Lectura ejecutiva de tiempos">
+              <section>
+                <h3>Semaforo de respuesta</h3>
+                <div id="timeSlaMix" class="time-mix"></div>
+              </section>
+              <section>
+                <h3>Carga por responsable</h3>
+                <div id="timeActors" class="time-actors"></div>
+              </section>
+              <section>
+                <h3>Cola de calidad</h3>
+                <div id="timeQualityQueue" class="time-quality-list"></div>
+              </section>
+            </div>
+            <div class="filter-toolbar" aria-label="Filtros de tiempos y calidad">
+              <label class="search-field">
+                <span>Buscar</span>
+                <input type="search" placeholder="Referencia, tipo u observacion" data-filter-search="tiempos">
+              </label>
+              <label>
+                <span>Semaforo</span>
+                <select data-filter-table="tiempos" data-filter-field="semaforo"></select>
+              </label>
+              <label>
+                <span>Tipo</span>
+                <select data-filter-table="tiempos" data-filter-field="tipo"></select>
+              </label>
+              <label>
+                <span>Vista tiempo</span>
+                <select data-filter-table="tiempos" data-filter-field="lane_tiempo"></select>
+              </label>
+              <label>
+                <span>Dueno atraso</span>
+                <select data-filter-table="tiempos" data-filter-field="dueno_atraso"></select>
+              </label>
+              <label>
+                <span>Riesgo calidad</span>
+                <select data-filter-table="tiempos" data-filter-field="riesgo_calidad"></select>
+              </label>
+              <label>
+                <span>Responsable</span>
+                <select data-filter-table="tiempos" data-filter-field="actor_destino"></select>
+              </label>
+              <label>
+                <span>Equipo</span>
+                <select data-filter-table="tiempos" data-filter-field="responsable_equipo"></select>
+              </label>
+              <label>
+                <span>Lectura</span>
+                <select data-filter-table="tiempos" data-filter-field="lectura_confianza"></select>
+              </label>
+              <label>
+                <span>Estado</span>
+                <select data-filter-table="tiempos" data-filter-field="estado_medicion"></select>
+              </label>
+              <button type="button" class="clear-filters" data-filter-clear="tiempos">Limpiar</button>
+            </div>
+            <div class="active-filters" data-active-filters="tiempos"></div>
+            <div class="table-wrap">
+              <table class="executive-table">
+                <thead>
+                  <tr>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="referencia">Referencia <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="tipo">Tipo <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="duracion">Duracion <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="semaforo">Semaforo <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="responsable">Responsable <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="ventana">Ventana <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="tiempos" data-sort-key="observacion">Observacion <span data-sort-indicator></span></button></th>
+                    <th class="detail-heading">Detalle</th>
+                  </tr>
+                </thead>
+                <tbody id="tiemposRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="panel-cotizaciones" class="tab-panel" role="tabpanel" aria-labelledby="tab-cotizaciones" data-panel="cotizaciones" hidden>
+            <div class="view-summary">
+              <div>
+                <h3>Cotizaciones</h3>
+                <p>Vivas, pendientes de pricing, enviadas, con dudas o por cerrar.</p>
+              </div>
+              <span id="cotizacionesViewMeta">-</span>
+            </div>
+            <div class="quote-insights" aria-label="Resumen de cotizaciones">
+              <article>
+                <span>Pendientes pricing</span>
+                <strong id="quotePendingPricing">-</strong>
+                <small>Falta tarifa o ETA del proveedor</small>
+              </article>
+              <article>
+                <span>Pricing respondio</span>
+                <strong id="quoteReadyToSend">-</strong>
+                <small>Falta cerrar envio o siguiente paso</small>
+              </article>
+              <article>
+                <span>Cliente con duda</span>
+                <strong id="quoteClientDoubts">-</strong>
+                <small>Aclaracion, ajuste o cambio solicitado</small>
+              </article>
+              <article>
+                <span>Atoradas</span>
+                <strong id="quoteStuck">-</strong>
+                <small>Rojo, desfase o pelota interna</small>
+              </article>
+            </div>
+            <div class="quote-board" aria-label="Lectura ejecutiva de cotizaciones">
+              <section>
+                <h3>Pipeline comercial</h3>
+                <div id="quotePipelineBoard" class="quote-pipeline-board"></div>
+              </section>
+              <section>
+                <h3>Carga por usuario</h3>
+                <div id="quoteUsers" class="quote-users"></div>
+              </section>
+              <section>
+                <h3>Por cerrar ahora</h3>
+                <div id="quoteCloseQueue" class="quote-close-list"></div>
+              </section>
+            </div>
+            <div class="filter-toolbar" aria-label="Filtros de cotizaciones">
+              <label class="search-field">
+                <span>Buscar</span>
+                <input type="search" placeholder="Referencia, cliente, servicio o accion" data-filter-search="cotizaciones">
+              </label>
+              <label>
+                <span>Estatus</span>
+                <select data-filter-table="cotizaciones" data-filter-field="estado_cotizacion"></select>
+              </label>
+              <label>
+                <span>Pricing real</span>
+                <select data-filter-table="cotizaciones" data-filter-field="pricing_pendiente_real"></select>
+              </label>
+              <label>
+                <span>Periodo</span>
+                <select data-filter-table="cotizaciones" data-filter-field="periodo_trabajo"></select>
+              </label>
+              <label>
+                <span>Mes</span>
+                <select data-filter-table="cotizaciones" data-filter-field="mes_origen"></select>
+              </label>
+              <label>
+                <span>Decision</span>
+                <select data-filter-table="cotizaciones" data-filter-field="decision_ejecutiva"></select>
+              </label>
+              <label>
+                <span>Cola</span>
+                <select data-filter-table="cotizaciones" data-filter-field="cola_trabajo"></select>
+              </label>
+              <label>
+                <span>Etapa</span>
+                <select data-filter-table="cotizaciones" data-filter-field="etapa_comercial"></select>
+              </label>
+              <label>
+                <span>Semaforo</span>
+                <select data-filter-table="cotizaciones" data-filter-field="semaforo"></select>
+              </label>
+              <label>
+                <span>Usuario</span>
+                <select data-filter-table="cotizaciones" data-filter-field="usuario_sheet"></select>
+              </label>
+              <label>
+                <span>Equipo</span>
+                <select data-filter-table="cotizaciones" data-filter-field="responsable_equipo"></select>
+              </label>
+              <label>
+                <span>Pelota</span>
+                <select data-filter-table="cotizaciones" data-filter-field="pelota"></select>
+              </label>
+              <label>
+                <span>Lectura</span>
+                <select data-filter-table="cotizaciones" data-filter-field="lectura_confianza"></select>
+              </label>
+              <label>
+                <span>Sync</span>
+                <select data-filter-table="cotizaciones" data-filter-field="estado_sincronizacion"></select>
+              </label>
+              <button type="button" class="clear-filters" data-filter-clear="cotizaciones">Limpiar</button>
+            </div>
+            <div class="active-filters" data-active-filters="cotizaciones"></div>
+            <div class="table-wrap">
+              <table class="executive-table">
+                <thead>
+                  <tr>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="referencia">Referencia <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="cliente">Cliente / servicio <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="usuario">Usuario <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="decision">Decision <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="estado">Estatus <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="sync">Sync <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="accion">Accion sugerida <span data-sort-indicator></span></button></th>
+                    <th class="detail-heading">Detalle</th>
+                  </tr>
+                </thead>
+                <tbody id="cotizacionesRows"></tbody>
+              </table>
+            </div>
+          </section>
         </section>
 
-        <section id="historicas" class="panel">
+        <section id="historial" class="panel">
           <div class="panel-head">
             <div>
-              <p class="section-label">Memoria historica</p>
-              <h2>Referencias vivas</h2>
+              <p class="section-label">Historial</p>
+              <h2>Cambios y memoria operativa</h2>
             </div>
-            <span id="historicasCount"></span>
+            <span id="historialCount"></span>
           </div>
-          <div id="historicasList" class="reference-grid"></div>
+          <div class="history-sortbar" aria-label="Ordenar historial">
+            <button class="sort-button" type="button" data-sort-table="historial" data-sort-key="actualizado">Fecha <span data-sort-indicator></span></button>
+            <button class="sort-button" type="button" data-sort-table="historial" data-sort-key="referencia">Referencia <span data-sort-indicator></span></button>
+            <button class="sort-button" type="button" data-sort-table="historial" data-sort-key="cambio">Cambio <span data-sort-indicator></span></button>
+            <button class="sort-button" type="button" data-sort-table="historial" data-sort-key="carril">Carril <span data-sort-indicator></span></button>
+            <button class="sort-button" type="button" data-sort-table="historial" data-sort-key="riesgo">Riesgo <span data-sort-indicator></span></button>
+            <button class="sort-button" type="button" data-sort-table="historial" data-sort-key="fuente">Fuente <span data-sort-indicator></span></button>
+          </div>
+          <div id="historyLanes" class="history-lanes" aria-label="Carriles ejecutivos de historial"></div>
+          <div class="filter-toolbar history-toolbar" aria-label="Filtros de historial">
+            <label class="search-field">
+              <span>Buscar</span>
+              <input type="search" placeholder="Referencia, cambio, actor o fuente" data-history-search>
+            </label>
+            <label>
+              <span>Carril</span>
+              <select data-history-filter="historial_lane"></select>
+            </label>
+            <label>
+              <span>Riesgo</span>
+              <select data-history-filter="riesgo_memoria"></select>
+            </label>
+            <label>
+              <span>Referencia</span>
+              <select data-history-filter="historial_needs_reference"></select>
+            </label>
+            <label>
+              <span>Tipo</span>
+              <select data-history-filter="tipo_registro"></select>
+            </label>
+            <label>
+              <span>Cambio</span>
+              <select data-history-filter="tipo_cambio"></select>
+            </label>
+            <label>
+              <span>Fuente</span>
+              <select data-history-filter="fuente"></select>
+            </label>
+            <label>
+              <span>Periodo</span>
+              <select data-history-filter="periodo_trabajo"></select>
+            </label>
+            <label>
+              <span>Mes</span>
+              <select data-history-filter="mes_origen"></select>
+            </label>
+            <button type="button" class="clear-filters" data-history-clear>Limpiar</button>
+          </div>
+          <div class="active-filters" data-active-filters="historial"></div>
+          <div class="history-insights" aria-label="Resumen de historial">
+            <article>
+              <span>Referencias con cambio</span>
+              <strong id="historyRefs">-</strong>
+              <small>Memoria visible en la vista actual</small>
+            </article>
+            <article>
+              <span>Empeoraron o desfase</span>
+              <strong id="historyRisk">-</strong>
+              <small>Requieren validacion o accion</small>
+            </article>
+            <article>
+              <span>Cambio de pelota</span>
+              <strong id="historyHandoff">-</strong>
+              <small>El responsable visible se movio</small>
+            </article>
+            <article>
+              <span>Arrastre historico</span>
+              <strong id="historyHistorical">-</strong>
+              <small>Vivo, pero separado del frente de hoy</small>
+            </article>
+            <article>
+              <span>Falta referencia</span>
+              <strong id="historyNeedsRef">-</strong>
+              <small>Importante, pero requiere INT/embarque</small>
+            </article>
+            <article>
+              <span>Ultimo movimiento</span>
+              <strong id="historyLatest">-</strong>
+              <small>Fecha mas reciente filtrada</small>
+            </article>
+          </div>
+          <div class="history-board">
+            <div class="history-main">
+              <div id="historialList" class="history-grid"></div>
+            </div>
+            <aside class="history-side" aria-label="Lectura de comportamiento">
+              <section>
+                <h3>Mezcla de cambios</h3>
+                <div id="historyChangeMix" class="history-mix"></div>
+              </section>
+              <section>
+                <h3>Referencias con mas movimiento</h3>
+                <div id="historyTopRefs" class="history-toprefs"></div>
+              </section>
+              <section>
+                <h3>Timeline reciente</h3>
+                <div id="historyTimeline" class="history-timeline"></div>
+              </section>
+            </aside>
+          </div>
         </section>
       </section>
     </main>

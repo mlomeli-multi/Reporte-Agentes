@@ -4,3 +4,6 @@ work/*.json
 outputs/
 .env
 *.log
+node_modules/
+.wrangler/
+scripts/apply-outlook-deep-scan-*.js

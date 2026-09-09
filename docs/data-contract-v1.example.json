@@ -1,0 +1,350 @@
+{
+  "version": "mini-tms-v1",
+  "generated_at": "2026-08-31T07:01:52-06:00",
+  "timezone": "America/Mexico_City",
+  "summary": {
+    "operaciones_vivas": 3,
+    "operaciones_mes_actual": 0,
+    "operaciones_historicas_vivas": 3,
+    "operaciones_criticas": 1,
+    "cotizaciones_vivas": 4,
+    "cotizaciones_mes_actual": 0,
+    "cotizaciones_historicas_vivas": 4,
+    "pendientes_pricing": 2,
+    "sheet_desfasado": 1,
+    "respuestas_rojas": 1,
+    "atender_ahora": 2,
+    "seguimiento_hoy": 3,
+    "revisar_inconsistencia": 1
+  },
+  "executive_digest": {
+    "headline": "2 acciones inmediatas, 1 inconsistencia y 1 alerta de tiempos.",
+    "alertas": [
+      {
+        "id": "accion-ahora",
+        "nivel": "rojo",
+        "titulo": "Accion inmediata",
+        "detalle": "2 registros requieren movimiento ahora.",
+        "accion": "Abrir prioridades de operacion",
+        "target": {
+          "table": "operacion",
+          "filters": {
+            "decision_ejecutiva": "atender_ahora"
+          },
+          "search": ""
+        },
+        "count": 2
+      }
+    ],
+    "prioridades": [
+      {
+        "id": "INTXX-YYYY-001",
+        "tipo": "Operacion",
+        "cliente": "Cliente ejemplo",
+        "estado": "atender_ahora",
+        "actor": "Ops aereo MULTI",
+        "accion": "Confirmar descarga y POD.",
+        "at": "2026-08-31T06:40:00-06:00",
+        "target": {
+          "table": "operacion",
+          "filters": {},
+          "search": "INTXX-YYYY-001"
+        }
+      }
+    ],
+    "reporte": {
+      "tipo": "manana",
+      "asunto_sugerido": "Reporte ejecutivo MLTI - Agosto",
+      "resumen_corto": "2 registros requieren accion inmediata; 3 quedan para seguimiento durante el dia.",
+      "bullets": [
+        "2 registros requieren accion inmediata; 3 quedan para seguimiento durante el dia.",
+        "4 cotizaciones vivas: 2 pendientes de pricing y 1 con pricing respondido pendiente de accion."
+      ],
+      "acciones_miguel": [
+        "INTXX-YYYY-001: Confirmar descarga y POD."
+      ],
+      "acciones_miguel_detalle": [
+        {
+          "id": "INTXX-YYYY-001",
+          "tipo": "Operacion",
+          "cliente": "Cliente ejemplo",
+          "criticidad": "critico",
+          "estado": "entrega_pendiente",
+          "ultimo_movimiento_at": "2026-08-31T06:40:00-06:00",
+          "ultimo_movimiento": "Unidad en planta esperando ingreso.",
+          "por_que_importa": "Requiere accion inmediata por entrega pendiente.",
+          "pelota": "Ops aereo MULTI",
+          "accion": "Confirmar descarga y POD.",
+          "evidencia": {
+            "fuente": "outlook",
+            "tipo": "correo",
+            "link": "omitido-en-ejemplo",
+            "resumen": "Unidad en planta esperando ingreso."
+          },
+          "target": {
+            "table": "operacion",
+            "filters": {},
+            "search": "INTXX-YYYY-001"
+          }
+        }
+      ],
+      "riesgos_detalle": [
+        {
+          "id": "sheet-desfasado",
+          "nivel": "amarillo",
+          "titulo": "Sheet desfasado",
+          "detalle": "1 cotizacion no cuadra entre Sheet, Outlook o memoria.",
+          "accion": "Validar si ya se envio, si falta capturar SAM o si solo queda monitoreo.",
+          "count": 1,
+          "target": {
+            "table": "cotizaciones",
+            "filters": {
+              "sheet_desfasado": true
+            },
+            "search": ""
+          }
+        }
+      ],
+      "bloques": [
+        {
+          "id": "operacion",
+          "titulo": "Operacion",
+          "lectura": "Solo incluye operaciones/cadenas operativas; cotizaciones activas se reportan en el bloque comercial.",
+          "bullets": [
+            "1 referencia esta en frente activo."
+          ],
+          "target": {
+            "table": "operacion",
+            "filters": {
+              "vista_operativa": "frente_activo"
+            },
+            "search": ""
+          },
+          "items": []
+        }
+      ],
+      "cobertura": [
+        "Sheet activo: Agosto.",
+        "Operacion: 3 registros visibles.",
+        "Cotizaciones: 4 registros visibles.",
+        "Tiempos/calidad: 1 mediciones visibles.",
+        "Historial: 1 eventos recientes."
+      ],
+      "cobertura_detalle": {
+        "sheet": {
+          "spreadsheet": "COTIZACIONES AGENTES 2026 MLTI",
+          "tab": "Agosto",
+          "range": "Agosto!A1:I500",
+          "scanned_at": "2026-08-31T07:00:00-06:00",
+          "real_rows": 120,
+          "partial_rows": 0,
+          "placeholder_rows": 80
+        },
+        "outlook": {
+          "last_import_at": "2026-08-31T07:00:00-06:00",
+          "coverage_note": "Memoria local y snapshot compacto de Outlook."
+        },
+        "dashboard": {
+          "operaciones": 3,
+          "cotizaciones": 4,
+          "tiempos_calidad": 1,
+          "historial": 1
+        },
+        "privacidad": "Datos reales permanecen en work/ y dashboard/data/current.json; no subir a GitHub publico."
+      },
+      "limitaciones": [
+        "El reporte no modifica Outlook ni Google Sheet."
+      ]
+    }
+  },
+  "tabs": {
+    "operacion": {
+      "kpis": {
+        "vivas": 3,
+        "criticas": 1,
+        "altas": 2,
+        "sam_pendiente": 1,
+        "por_decision": {
+          "atender_ahora": 1,
+          "seguimiento_hoy": 2
+        },
+        "por_cola_trabajo": {
+          "pelota_multi": 1,
+          "pelota_cliente_agente": 1,
+          "sin_sam": 1
+        }
+      },
+      "items": [
+        {
+          "id": "INTXX-YYYY-001",
+          "int_ref": "INTXX-YYYY-001",
+          "sam_refs": ["AA-YYYYMM-0001"],
+          "cliente": "Cliente ejemplo",
+          "servicio": "DAP AEREO",
+          "modalidad": "aereo",
+          "estado_operativo": "entrega_pendiente",
+          "criticidad": "critico",
+          "decision_ejecutiva": "atender_ahora",
+          "cola_trabajo": "pelota_multi",
+          "nivel_decision": 0,
+          "motivo_prioridad": "Requiere accion inmediata: entrega pendiente; pelota visible en Ops aereo MULTI.",
+          "pelota": "Ops aereo MULTI",
+          "responsable_multi": "Equipo ejemplo",
+          "accion_sugerida": "Confirmar descarga y POD.",
+          "ultimo_movimiento_at": "2026-08-31T06:40:00-06:00",
+          "ultimo_movimiento_resumen": "Unidad en planta esperando ingreso.",
+          "mes_origen": "Agosto",
+          "mes_codigo": "08",
+          "periodo_trabajo": "historico_vivo",
+          "es_mes_actual": false,
+          "es_historico_vivo": true,
+          "evidencia": {
+            "fuente": "outlook",
+            "tipo": "correo",
+            "link": "omitido-en-ejemplo"
+          },
+          "seguir_en_reportes_diarios": true,
+          "tags": ["cliente_top", "urgente"]
+        }
+      ]
+    },
+    "tiempos_calidad": {
+      "kpis": {
+        "promedio_cliente_a_multi_min": 55,
+        "promedio_pricing_min": 240,
+        "respuestas_rojas": 1,
+        "dudas_reabiertas": 1
+      },
+      "items": [
+        {
+          "id": "TR-001",
+          "referencia_id": "INTXX-YYYY-001",
+          "tipo": "cliente_a_multi",
+          "inicio_at": "2026-08-31T04:30:00-06:00",
+          "fin_at": "2026-08-31T05:25:00-06:00",
+          "duracion_min": 55,
+          "objetivo_min": 120,
+          "brecha_min": -65,
+          "estado_medicion": "cumplido",
+          "semaforo": "verde",
+          "actor_origen": "Cliente ejemplo",
+          "actor_destino": "MULTI",
+          "responsable_equipo": "equipo_mi",
+          "observacion": "Respuesta dentro de ventana aceptable.",
+          "evidencia": {
+            "fuente": "outlook",
+            "tipo": "correo",
+            "link": "omitido-en-ejemplo"
+          }
+        }
+      ]
+    },
+    "cotizaciones": {
+      "kpis": {
+        "vivas": 4,
+        "pendiente_pricing": 2,
+        "pricing_respondio_falta_enviar": 1,
+        "cliente_con_duda": 1,
+        "cerradas_con_sam": 0,
+        "por_decision": {
+          "atender_ahora": 1,
+          "seguimiento_hoy": 2,
+          "revisar_inconsistencia": 1
+        },
+        "por_cola_trabajo": {
+          "pelota_pricing": 2,
+          "pelota_multi": 1,
+          "sheet_desfasado": 1
+        }
+      },
+      "items": [
+        {
+          "id": "INTXX-YYYY-002",
+          "int_ref": "INTXX-YYYY-002",
+          "sam_refs": [],
+          "cliente": "Agente ejemplo",
+          "network": "WCA",
+          "servicio": "EXW MARITIMO",
+          "usuario_sheet": "Usuario ejemplo",
+          "estatus_sheet": "Pendiente de Coti. Pricing",
+          "estado_cotizacion": "pendiente_pricing",
+          "etapa_comercial": "etapa_pricing",
+          "semaforo": "rojo",
+          "decision_ejecutiva": "seguimiento_hoy",
+          "cola_trabajo": "pelota_pricing",
+          "nivel_decision": 2,
+          "motivo_prioridad": "Seguimiento necesario hoy por criticidad rojo o antiguedad de la evidencia.",
+          "pelota": "Pricing maritimo",
+          "accion_sugerida": "Pedir ETA de tarifa y preparar envio.",
+          "solicitud_cliente_at": "2026-08-30T15:10:00-06:00",
+          "pricing_solicitado_at": "2026-08-30T15:25:00-06:00",
+          "pricing_responde_at": null,
+          "tarifa_enviada_cliente_at": null,
+          "cliente_responde_at": null,
+          "cerrado_at": null,
+          "antiguedad_dias": 1,
+          "sheet_row": 100,
+          "sheet_desfasado": false,
+          "mes_origen": "Agosto",
+          "mes_codigo": "08",
+          "periodo_trabajo": "historico_vivo",
+          "es_mes_actual": false,
+          "es_historico_vivo": true,
+          "evidencia": {
+            "fuente": "google_sheet",
+            "tipo": "fila",
+            "link": "omitido-en-ejemplo"
+          }
+        }
+      ]
+    }
+  },
+  "history": [
+    {
+      "id": "EV-001",
+      "referencia_id": "INTXX-YYYY-001",
+      "at": "2026-08-31T06:40:00-06:00",
+      "fuente": "outlook",
+      "tipo_cambio": "mejoro",
+      "historial_lane": "mejora_cierre",
+      "riesgo_memoria": "saludable",
+      "lectura_memoria": "Avance visible conservado como evento representativo.",
+      "historial_dedupe_key": "cotizacion:intxx_yyyy_001",
+      "historial_priority": 5,
+      "historial_has_system_ref": true,
+      "historial_needs_reference": false,
+      "historial_clean_reason": "evento_representativo_por_referencia",
+      "resumen": "La operacion paso de en transito a entrega pendiente.",
+      "antes": {
+        "estado_operativo": "en_transito"
+      },
+      "despues": {
+        "estado_operativo": "entrega_pendiente"
+      },
+      "evidencia": {
+        "fuente": "outlook",
+        "tipo": "correo",
+        "link": "omitido-en-ejemplo"
+      }
+    }
+  ],
+  "source_state": {
+    "last_report_type": "manana",
+    "last_successful_report": "2026-08-31T07:01:52-06:00",
+      "last_sheet_scan": {
+        "spreadsheet": "COTIZACIONES AGENTES 2026 MLTI",
+        "tab": "Agosto",
+        "range": "Agosto!A1:I500"
+      },
+      "month_policy": {
+        "active_month_code": "08",
+        "active_month_name": "Agosto",
+        "active_sheet_tab": "Agosto",
+        "rule": "El mes local actual es la fuente principal; meses anteriores aparecen solo como historicos vivos o inconsistencias."
+      }
+  },
+  "warnings": [
+    "Ejemplo anonimo. No contiene datos reales.",
+    "El archivo real dashboard/data/current.json no debe subirse a GitHub."
+  ]
+}

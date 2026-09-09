@@ -4,8 +4,18 @@
   "private": true,
   "description": "Dashboard privado para prioridades Outlook, cotizaciones y memoria historica MLTI.",
   "scripts": {
+    "test": "node test/run-tests.js",
+    "data:sheet-snapshot": "node scripts/import-sheet-cotizaciones-snapshot.js",
+    "data:outlook-snapshot": "node scripts/import-outlook-snapshot.js",
     "data:dashboard": "node scripts/build-dashboard-data.js",
+    "report:check": "node scripts/check-report-window.js",
+    "report:manual": "node scripts/run-report-automation.js --type=manual",
+    "report:auto": "node scripts/run-report-automation.js --type=auto",
+    "report:deploy": "node scripts/run-report-automation.js --type=manual --deploy",
     "serve:dashboard": "node scripts/serve-dashboard.js",
     "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare.ps1 -AccessReady"
+  },
+  "devDependencies": {
+    "wrangler": "^4.130.0"
   }
 }

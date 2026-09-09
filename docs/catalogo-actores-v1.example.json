@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "descripcion": "Plantilla anonima. El catalogo real vive en work/catalogo-actores-v1.json y no se sube a GitHub.",
+  "actor_types": {
+    "cliente": {
+      "terms": [
+        "CLIENTE EJEMPLO",
+        "MARCA EJEMPLO"
+      ],
+      "domains": [
+        "cliente-ejemplo.com"
+      ]
+    },
+    "agente": {
+      "terms": [
+        "AGENTE EJEMPLO",
+        "FORWARDER EJEMPLO"
+      ],
+      "domains": [
+        "agente-ejemplo.com"
+      ]
+    },
+    "proveedor": {
+      "terms": [
+        "CARRIER EJEMPLO",
+        "TRANSPORTISTA EJEMPLO"
+      ],
+      "domains": [
+        "proveedor-ejemplo.com"
+      ]
+    },
+    "cnee": {
+      "terms": [
+        "CNEE",
+        "Consignee"
+      ],
+      "domains": []
+    },
+    "shipper": {
+      "terms": [
+        "Shipper",
+        "Pickup"
+      ],
+      "domains": []
+    },
+    "pricing": {
+      "terms": [
+        "Pricing",
+        "Tarifa",
+        "Rate"
+      ],
+      "domains": []
+    },
+    "multi": {
+      "terms": [
+        "MULTI",
+        "NOMBRE EQUIPO EJEMPLO"
+      ],
+      "domains": [
+        "empresa-ejemplo.com"
+      ]
+    }
+  }
+}
