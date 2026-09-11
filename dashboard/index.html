@@ -16,13 +16,13 @@
             <span>MLTI privado</span>
           </div>
         </div>
-        <nav>
-          <a href="#mando">Mando</a>
-          <a href="#reporte">Reporte</a>
-          <a href="#riesgo">Riesgo</a>
-          <a href="#enfoque">Enfoque</a>
-          <a href="#trabajo">Trabajo</a>
-          <a href="#historial">Historial</a>
+        <nav role="tablist" aria-label="Secciones del Mini TMS">
+          <a id="main-tab-mando" class="active" href="#mando" role="tab" aria-selected="true" aria-controls="mando" data-main-tab="mando">Mando</a>
+          <a id="main-tab-reporte" href="#reporte" role="tab" aria-selected="false" aria-controls="reporte" data-main-tab="reporte">Reporte</a>
+          <a id="main-tab-riesgo" href="#riesgo" role="tab" aria-selected="false" aria-controls="riesgo" data-main-tab="riesgo">Riesgo</a>
+          <a id="main-tab-enfoque" href="#enfoque" role="tab" aria-selected="false" aria-controls="enfoque" data-main-tab="enfoque">Enfoque</a>
+          <a id="main-tab-trabajo" href="#trabajo" role="tab" aria-selected="false" aria-controls="trabajo" data-main-tab="trabajo">Trabajo</a>
+          <a id="main-tab-historial" href="#historial" role="tab" aria-selected="false" aria-controls="historial" data-main-tab="historial">Historial</a>
         </nav>
         <div class="sidebar-note">
           <strong>Acceso</strong>
@@ -31,16 +31,17 @@
       </aside>
 
       <section class="workspace">
-        <header id="mando" class="topbar">
-          <div>
-            <p class="eyebrow">Outlook + Google Sheet + memoria viva</p>
-            <h1>Mini TMS Ejecutivo</h1>
-          </div>
-          <div class="status-stack">
-            <span id="dataStatus" class="status-pill">Cargando datos</span>
-            <time id="generatedAt">-</time>
-          </div>
-        </header>
+        <section id="mando" class="workspace-panel active" role="tabpanel" aria-labelledby="main-tab-mando" data-main-panel="mando">
+          <header class="topbar">
+            <div>
+              <p class="eyebrow">Outlook + Google Sheet + memoria viva</p>
+              <h1>Mini TMS Ejecutivo</h1>
+            </div>
+            <div class="status-stack">
+              <span id="dataStatus" class="status-pill">Cargando datos</span>
+              <time id="generatedAt">-</time>
+            </div>
+          </header>
 
         <section class="command-center" aria-label="Lectura ejecutiva">
           <article class="command-main">
@@ -85,7 +86,9 @@
           </article>
         </section>
 
-        <section id="reporte" class="daily-command" aria-label="Mando ejecutivo del dia">
+        </section>
+
+        <section id="reporte" class="workspace-panel daily-command" role="tabpanel" aria-labelledby="main-tab-reporte" data-main-panel="reporte" aria-label="Mando ejecutivo del dia" hidden>
           <article class="panel decision-panel">
             <div class="panel-head">
               <div>
@@ -201,7 +204,7 @@
           </article>
         </section>
 
-        <section id="riesgo" class="executive-grid">
+        <section id="riesgo" class="workspace-panel executive-grid" role="tabpanel" aria-labelledby="main-tab-riesgo" data-main-panel="riesgo" hidden>
           <article class="panel">
             <div class="panel-head">
               <div>
@@ -236,7 +239,7 @@
           </article>
         </section>
 
-        <section id="enfoque" class="focus-layout">
+        <section id="enfoque" class="workspace-panel focus-layout" role="tabpanel" aria-labelledby="main-tab-enfoque" data-main-panel="enfoque" hidden>
           <article class="panel attention-panel">
             <div class="panel-head">
               <div>
@@ -260,7 +263,7 @@
           </article>
         </section>
 
-        <section id="trabajo" class="panel workbench">
+        <section id="trabajo" class="workspace-panel panel workbench" role="tabpanel" aria-labelledby="main-tab-trabajo" data-main-panel="trabajo" hidden>
           <div class="panel-head">
             <div>
               <p class="section-label">Centro de trabajo</p>
@@ -679,6 +682,10 @@
                 <select data-filter-table="cotizaciones" data-filter-field="usuario_sheet"></select>
               </label>
               <label>
+                <span>Follow-up MX</span>
+                <select data-filter-table="cotizaciones" data-filter-field="followup_mexico_owner"></select>
+              </label>
+              <label>
                 <span>Equipo</span>
                 <select data-filter-table="cotizaciones" data-filter-field="responsable_equipo"></select>
               </label>
@@ -704,6 +711,7 @@
                     <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="referencia">Referencia <span data-sort-indicator></span></button></th>
                     <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="cliente">Cliente / servicio <span data-sort-indicator></span></button></th>
                     <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="usuario">Usuario <span data-sort-indicator></span></button></th>
+                    <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="followup">Follow-up MX <span data-sort-indicator></span></button></th>
                     <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="decision">Decision <span data-sort-indicator></span></button></th>
                     <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="estado">Estatus <span data-sort-indicator></span></button></th>
                     <th><button class="sort-button" type="button" data-sort-table="cotizaciones" data-sort-key="sync">Sync <span data-sort-indicator></span></button></th>
@@ -717,7 +725,7 @@
           </section>
         </section>
 
-        <section id="historial" class="panel">
+        <section id="historial" class="workspace-panel panel" role="tabpanel" aria-labelledby="main-tab-historial" data-main-panel="historial" hidden>
           <div class="panel-head">
             <div>
               <p class="section-label">Historial</p>

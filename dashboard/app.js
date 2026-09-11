@@ -1,5 +1,6 @@
 const nf = new Intl.NumberFormat("es-MX");
 const appTimezone = "America/Mexico_City";
+const mainPanelIds = ["mando", "reporte", "riesgo", "enfoque", "trabajo", "historial"];
 
 const formatDate = (value) => {
   if (!value) return "-";
@@ -310,6 +311,68 @@ const setStatus = (message, mode) => {
 const countFrom = (bucket, ...keys) =>
   keys.reduce((sum, key) => sum + Number(bucket?.[key] || bucket?.[className(key)] || 0), 0);
 
+const setActiveMainPanel = (panelName, updateHash = true) => {
+  const selectedPanel = mainPanelIds.includes(panelName) ? panelName : "mando";
+
+  document.querySelectorAll("[data-main-tab]").forEach((tab) => {
+    const isActive = tab.dataset.mainTab === selectedPanel;
+    tab.classList.toggle("active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
+
+  document.querySelectorAll("[data-main-panel]").forEach((panel) => {
+    const isActive = panel.dataset.mainPanel === selectedPanel;
+    panel.classList.toggle("active", isActive);
+    panel.hidden = !isActive;
+  });
+
+  if (updateHash) {
+    history.replaceState(null, "", `#${selectedPanel}`);
+  }
+};
+
+const revealMainPanel = (panelName) => {
+  setActiveMainPanel(panelName);
+  window.requestAnimationFrame(() => {
+    document.getElementById(panelName)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+};
+
+const initializeMainPanels = () => {
+  const tabs = [...document.querySelectorAll("[data-main-tab]")];
+  if (!tabs.length) return;
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", (event) => {
+      event.preventDefault();
+      setActiveMainPanel(tab.dataset.mainTab);
+    });
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const lastIndex = tabs.length - 1;
+      const nextIndex =
+        event.key === "Home"
+          ? 0
+          : event.key === "End"
+            ? lastIndex
+            : event.key === "ArrowRight"
+              ? Math.min(lastIndex, index + 1)
+              : Math.max(0, index - 1);
+      tabs[nextIndex].focus();
+      setActiveMainPanel(tabs[nextIndex].dataset.mainTab);
+    });
+  });
+
+  window.addEventListener("hashchange", () => {
+    const hashPanel = window.location.hash.replace("#", "");
+    if (mainPanelIds.includes(hashPanel)) setActiveMainPanel(hashPanel, false);
+  });
+
+  const initialPanel = window.location.hash.replace("#", "");
+  setActiveMainPanel(initialPanel, false);
+};
+
 const setActiveTab = (tabName, updateHash = true) => {
   document.querySelectorAll("[data-tab]").forEach((button) => {
     const isActive = button.dataset.tab === tabName;
@@ -324,7 +387,7 @@ const setActiveTab = (tabName, updateHash = true) => {
   });
 
   if (updateHash) {
-    history.replaceState(null, "", "#trabajo");
+    setActiveMainPanel("trabajo");
   }
 };
 
@@ -487,6 +550,7 @@ const sortAccessors = {
     referencia: (row) => row.int_ref || row.referencia_int || row.id,
     cliente: (row) => row.cliente || row.cliente_actor,
     usuario: (row) => row.usuario_sheet || row.usuario_responsable,
+    followup: (row) => row.followup_mexico_owner || row.followup_mexico_status,
     decision: (row) => row.decision_ejecutiva,
     estado: (row) => row.estado_cotizacion,
     etapa: (row) => row.etapa_comercial,
@@ -657,6 +721,17 @@ const renderActionCell = (row) =>
     row.motivo_prioridad || row.ultimo_movimiento_resumen || row.ultima_evidencia || "",
     renderMiniTags([row.lectura_confianza, row.accion_confidence])
   );
+
+const renderFollowupCell = (row) => {
+  if (!row.followup_mexico_owner) {
+    return renderStack("No aplica", row.followup_mexico_status ? labelText(row.followup_mexico_status) : "");
+  }
+  return renderStack(
+    row.followup_mexico_owner,
+    row.followup_mexico_reason || "",
+    renderMiniTags([row.followup_mexico_status, row.followup_mexico_source])
+  );
+};
 
 const renderDateCell = (row) => renderStack(formatDate(row.ultimo_movimiento_at || row.ultima_evidencia_at || row.inicio_at), row.frescura ? labelText(row.frescura) : "");
 
@@ -924,6 +999,9 @@ const renderRowDetails = (row, kind) => {
       0,
       renderDetailLine("Etapa comercial", row.etapa_comercial, labelText),
       renderDetailLine("Antiguedad", row.antiguedad_dias != null ? `${row.antiguedad_dias} dias` : ""),
+      renderDetailLine("Follow-up Mexico", row.followup_mexico_owner),
+      renderDetailLine("Estado follow-up Mexico", row.followup_mexico_status, labelText),
+      renderDetailLine("Criterio follow-up Mexico", row.followup_mexico_reason),
       renderDetailLine("Solicitud", row.solicitud_cliente_at, formatDate),
       renderDetailLine("Pricing responde", row.pricing_responde_at, formatDate),
       renderDetailLine("Enviada cliente", row.tarifa_enviada_cliente_at, formatDate)
@@ -973,6 +1051,7 @@ tableColumns = {
     { render: renderReferenceCell, className: "col-ref" },
     { render: renderClientCell, className: "col-client" },
     { key: ["usuario_sheet", "usuario_responsable"], className: "col-owner" },
+    { render: renderFollowupCell, className: "col-owner" },
     { render: renderDecisionCell, className: "col-decision" },
     { render: (row) => renderStatusCell(row, "estado_cotizacion", "semaforo"), className: "col-status" },
     { render: (row) => renderStatusCell(row, "estado_sincronizacion", ""), className: "col-status" },
@@ -1132,6 +1211,7 @@ const setHistoryFilterValue = (field, value) => {
 
 const applyCommandTarget = (commandTarget) => {
   if (commandTarget?.table === "historial") {
+    revealMainPanel("historial");
     const search = document.querySelector("[data-history-search]");
     if (search) search.value = commandTarget.search || "";
     document.querySelectorAll("[data-history-filter]").forEach((select) => {
@@ -1140,12 +1220,12 @@ const applyCommandTarget = (commandTarget) => {
     Object.entries(commandTarget.filters || {}).forEach(([field, value]) => setHistoryFilterValue(field, value));
     saveHistoryView();
     applyHistoryFilters();
-    document.getElementById("historial")?.scrollIntoView({ behavior: "smooth", block: "start" });
     return;
   }
 
   if (!commandTarget?.table || !dashboardRows[commandTarget.table]) return;
   const tableName = commandTarget.table;
+  revealMainPanel("trabajo");
   activePresetId = "";
   setActiveTab(tableName);
   Object.keys(dashboardRows).forEach(clearFilterValues);
@@ -1159,7 +1239,6 @@ const applyCommandTarget = (commandTarget) => {
   saveTableView(tableName);
   updateQuickViewState();
   renderFilteredTables();
-  document.getElementById("trabajo")?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
 const initializeExecutiveActions = () => {
@@ -1659,6 +1738,7 @@ const initializeFilters = (tabs) => {
       button.addEventListener("click", () => {
         const preset = quickViews.find((entry) => entry.id === button.dataset.viewPreset);
         if (!preset) return;
+        revealMainPanel("trabajo");
         activePresetId = preset.id;
         setActiveTab(preset.table);
         Object.keys(dashboardRows).forEach(clearFilterValues);
@@ -1670,7 +1750,6 @@ const initializeFilters = (tabs) => {
         saveTableView(preset.table);
         updateQuickViewState();
         renderFilteredTables();
-        document.getElementById("trabajo")?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     });
     document.addEventListener("click", (event) => {
@@ -1692,6 +1771,7 @@ const initializeFilters = (tabs) => {
     document.getElementById("operationLanes")?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-operation-lane]");
       if (!button) return;
+      revealMainPanel("trabajo");
       activePresetId = "";
       setActiveTab("operacion");
       setFilterValue("operacion", "vista_operativa", button.dataset.operationLane || "");
@@ -1702,6 +1782,7 @@ const initializeFilters = (tabs) => {
     document.getElementById("timeLanes")?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-time-lane]");
       if (!button) return;
+      revealMainPanel("trabajo");
       activePresetId = "";
       setActiveTab("tiempos");
       setFilterValue("tiempos", "lane_tiempo", button.dataset.timeLane || "");
@@ -1712,6 +1793,7 @@ const initializeFilters = (tabs) => {
     document.getElementById("timeActors")?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-time-actor]");
       if (!button) return;
+      revealMainPanel("trabajo");
       activePresetId = "";
       setActiveTab("tiempos");
       setFilterValue("tiempos", "actor_destino", button.dataset.timeActor || "");
@@ -1722,6 +1804,7 @@ const initializeFilters = (tabs) => {
     document.getElementById("quotePipelineBoard")?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-quote-stage]");
       if (!button) return;
+      revealMainPanel("trabajo");
       activePresetId = "";
       setActiveTab("cotizaciones");
       setFilterValue("cotizaciones", "etapa_comercial", button.dataset.quoteStage || "");
@@ -1732,6 +1815,7 @@ const initializeFilters = (tabs) => {
     document.getElementById("quoteUsers")?.addEventListener("click", (event) => {
       const button = event.target.closest("[data-quote-user]");
       if (!button) return;
+      revealMainPanel("trabajo");
       activePresetId = "";
       setActiveTab("cotizaciones");
       setFilterValue("cotizaciones", "usuario_sheet", button.dataset.quoteUser || "");
@@ -2957,7 +3041,7 @@ const renderMissingData = () => {
   setStatus("Sin datos reales", "missing");
   setText("generatedAt", "Genera dashboard/data/current.json localmente");
   setText("privacyStatus", "No publicar datos reales sin Cloudflare Access");
-  document.querySelector(".workspace").insertAdjacentHTML(
+  document.querySelector("#mando")?.insertAdjacentHTML(
     "beforeend",
     `<section class="empty-state">
       <strong>Este entorno no tiene datos reales cargados.</strong>
@@ -3015,6 +3099,7 @@ const loadDashboard = async () => {
   initializeHistoryFilters(data.history || []);
 };
 
+initializeMainPanels();
 initializeTabs();
 initializeRowDetails();
 initializeDensityControls();
@@ -3022,7 +3107,7 @@ initializeSortControls();
 initializeExecutiveActions();
 loadDashboard().catch((error) => {
   setStatus("Error al cargar", "missing");
-  document.querySelector(".workspace").insertAdjacentHTML(
+  document.querySelector("#mando")?.insertAdjacentHTML(
     "beforeend",
     `<section class="empty-state"><strong>Error al leer datos.</strong><span>${escapeHtml(error.message || error)}</span></section>`
   );
