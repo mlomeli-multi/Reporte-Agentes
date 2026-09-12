@@ -247,9 +247,32 @@ const quotePulseTable = (items) =>
     ["Ref", (item) => refId(item)],
     ["Cliente", (item) => item.cliente],
     ["Usuario", (item) => item.usuario_sheet || item.usuario_responsable],
+    ["Follow-up MX", (item) => item.followup_mexico_owner || "-"],
     ["Estado", (item) => item.estado_cotizacion],
     ["Accion", (item) => item.accion_sugerida || item.accion_siguiente],
   ]);
+
+const teamsHandoffMarkdown = (handoff) => {
+  if (!handoff || !handoff.has_items) {
+    return bullet("Sin cotizaciones de Brenda pendientes para handoff Mexico 10:00 con el corte actual.");
+  }
+
+  const groupSummary = (handoff.groups || [])
+    .map((group) => `${group.owner}: ${group.item_count}`)
+    .join(", ");
+
+  return [
+    bullet(`Chat Teams: ${handoff.chat_name || "Agents team <3"}.`),
+    bullet(`Responsables asignados: ${groupSummary || "sin detalle"}.`),
+    bullet(`Total para seguimiento Mexico: ${handoff.item_count || 0}.`),
+    "",
+    "Mensaje sugerido/enviado:",
+    "",
+    "```text",
+    handoff.message || "",
+    "```",
+  ].join("\n");
+};
 
 const hasAnyKeyword = (item, keywords) => {
   const text = normalizedKey(
@@ -294,6 +317,7 @@ const middayReportMarkdown = (data, generatedAt, notes) => {
   const dataQuality = report.calidad_dato || {};
   const coverageDetail = report.cobertura_detalle || null;
   const limitations = report.limitaciones || [];
+  const teamsHandoff = digest.teams_handoff || {};
   const fallbackReady = actionDetails.filter((item) => itemTrust(item) === "accion_confiable");
   const fallbackProbable = actionDetails.filter((item) => ["accion_probable", "monitoreo_controlado"].includes(itemTrust(item)));
   const fallbackValidation = actionDetails.filter((item) => ["validar_antes", "sin_evidencia_suficiente"].includes(itemTrust(item)));
@@ -356,6 +380,9 @@ const middayReportMarkdown = (data, generatedAt, notes) => {
     "## Cotizaciones que deben salir hoy",
     quoteRows.length ? quotePulseTable(quoteRows) : "_Sin cotizaciones prioritarias visibles para mover antes de la tarde._",
     "",
+    "## Teams / seguimiento Brenda 10:00",
+    teamsHandoffMarkdown(teamsHandoff),
+    "",
     "## Urgencias nuevas detectadas",
     urgentChanges.length ? changePulseTable(urgentChanges) : bullet("Sin urgencias nuevas o deterioros claros en el historial reciente."),
     "",
@@ -417,6 +444,7 @@ const reportMarkdown = (data, type, generatedAt, notes) => {
   const coverageDetail = report.cobertura_detalle || null;
   const limitations = report.limitaciones || [];
   const typeName = typeLabel[type] || type;
+  const teamsHandoff = digest.teams_handoff || {};
 
   const topOps = operaciones
     .filter((item) => item.es_prioridad_reporte === true && item.estado_operativo !== "cotizacion_activa" && item.cola_trabajo !== "pelota_pricing")
@@ -518,10 +546,14 @@ const reportMarkdown = (data, type, generatedAt, notes) => {
       ["Ref", (item) => refId(item)],
       ["Cliente", (item) => item.cliente],
       ["Usuario", (item) => item.usuario_sheet || item.usuario_responsable],
+      ["Follow-up MX", (item) => item.followup_mexico_owner || "-"],
       ["Etapa", (item) => item.etapa_comercial],
       ["Estado", (item) => item.estado_cotizacion],
       ["Accion", (item) => item.accion_sugerida || item.accion_siguiente],
     ]),
+    "",
+    "## Teams / seguimiento Brenda 10:00",
+    teamsHandoffMarkdown(teamsHandoff),
     "",
     "## Backlog vivo / por validar",
     tableRows(backlog, [
@@ -549,6 +581,7 @@ const reportMarkdown = (data, type, generatedAt, notes) => {
     bullet(`Cotizaciones vivas: ${summary.cotizaciones_vivas || 0}.`),
     bullet(`Prioridades reales de hoy: ${summary.prioridad_hoy || 0}.`),
     bullet(`Cotizaciones pendientes reales de Pricing: ${summary.cotizaciones_pendientes_reales || 0} (${summary.cotizaciones_pendientes_mes_actual || 0} mes actual, ${summary.cotizaciones_pendientes_historicas || 0} historicas).`),
+    bullet(`Handoff Mexico por turno de Brenda: ${summary.cotizaciones_handoff_mexico || 0}.`),
     bullet(`Pendientes segun estatus literal del Sheet/memoria: ${summary.cotizaciones_sheet_pendientes || 0} (${summary.cotizaciones_sheet_pendientes_mes_actual || 0} mes actual, ${summary.cotizaciones_sheet_pendientes_historicas || 0} historicas); reclasificadas por correo/evidencia: ${summary.cotizaciones_sheet_pendientes_reclasificadas || 0}.`),
     bullet(`Cotizaciones ya cotizadas/en monitoreo: ${summary.cotizaciones_cotizadas || 0}.`),
     bullet(`Backlog historico separado: ${summary.backlog_historico || 0}.`),

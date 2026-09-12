@@ -21,6 +21,8 @@ const {
   quoteEmailStatusKey,
 } = require("./lib/quote-status-engine");
 const { cleanHistoryEvents } = require("./lib/history-engine");
+const { mexicoFollowupHandoff } = require("./lib/followup-handoff-engine");
+const { buildTeamsHandoffMessage } = require("./lib/teams-handoff-message");
 
 const root = path.resolve(__dirname, "..");
 const timezone = "America/Mexico_City";
@@ -1024,6 +1026,12 @@ const applyResponsibleTeam = (item, context = {}) => {
   item.responsable_area = profile.responsable_area;
   item.responsable_equipo_reason = profile.responsable_equipo_reason;
   item.responsable_equipo_confidence = profile.responsable_equipo_confidence;
+  return item;
+};
+
+const applyMexicoFollowupHandoff = (item) => {
+  const handoff = mexicoFollowupHandoff(item, { timezone });
+  Object.assign(item, handoff);
   return item;
 };
 
@@ -2263,6 +2271,8 @@ const isQuoteStuck = (item) =>
 cotizaciones.forEach((item) => {
   item.pricing_pendiente_real = isRealPricingPending(item);
   item.estado_cotizacion_ejecutivo = executiveQuoteStatus(item);
+  applyMexicoFollowupHandoff(item);
+  item.tags = buildTags(item, [item.estado_sincronizacion, item.followup_mexico_status]);
 });
 
 const referenceLabel = (item) => firstText(item.int_ref, item.referencia_int, item.referencia, item.referencia_id, item.id, "Sin referencia");
@@ -2703,6 +2713,7 @@ const summary = {
   cotizaciones_pendientes_reales: cotizaciones.filter(isRealPricingPending).length,
   cotizaciones_pendientes_mes_actual: cotizaciones.filter((item) => isRealPricingPending(item) && item.periodo_trabajo === "mes_actual").length,
   cotizaciones_pendientes_historicas: cotizaciones.filter((item) => isRealPricingPending(item) && item.periodo_trabajo === "historico_vivo").length,
+  cotizaciones_handoff_mexico: cotizaciones.filter((item) => item.followup_mexico_required).length,
   cotizaciones_cotizadas: cotizaciones.filter((item) => item.estado_cotizacion === "cotizada" || item.estado_cotizacion === "enviada_cliente").length,
   cotizaciones_sheet_cotizadas: cotizaciones.filter((item) => item.cotizada_sheet).length,
   cotizaciones_por_validar: cotizaciones.filter((item) => item.estado_cotizacion === "por_validar").length,
@@ -2827,6 +2838,9 @@ const tabs = {
       pendientes_reales: cotizaciones.filter(isRealPricingPending).length,
       pendientes_mes_actual: cotizaciones.filter((item) => isRealPricingPending(item) && item.periodo_trabajo === "mes_actual").length,
       pendientes_historicas: cotizaciones.filter((item) => isRealPricingPending(item) && item.periodo_trabajo === "historico_vivo").length,
+      handoff_mexico: cotizaciones.filter((item) => item.followup_mexico_required).length,
+      por_followup_mexico: bucketCount(cotizaciones, "followup_mexico_owner"),
+      por_estado_followup_mexico: bucketCount(cotizaciones, "followup_mexico_status"),
       cotizadas: cotizaciones.filter((item) => item.estado_cotizacion === "cotizada" || item.estado_cotizacion === "enviada_cliente").length,
       cotizadas_sheet: cotizaciones.filter((item) => item.cotizada_sheet).length,
       por_validar: cotizaciones.filter((item) => item.estado_cotizacion === "por_validar").length,
@@ -2856,12 +2870,15 @@ const tabs = {
   },
 };
 
+const executiveDigest = buildExecutiveDigest(summary, tabs, history);
+executiveDigest.teams_handoff = buildTeamsHandoffMessage(cotizaciones, { chatName: "Agents team <3" });
+
 const dashboard = {
   version: "mini-tms-v1",
   generated_at: new Date().toISOString(),
   timezone: state.timezone || timezone,
   summary,
-  executive_digest: buildExecutiveDigest(summary, tabs, history),
+  executive_digest: executiveDigest,
   tabs,
   history,
   history_summary: {

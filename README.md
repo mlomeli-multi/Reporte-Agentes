@@ -62,6 +62,18 @@ npm run report:deploy
 
 No modifica Outlook ni Google Sheet. Solo lee la foto local, actualiza memorias privadas, genera archivos locales y, si usas un comando con `deploy`, publica a Cloudflare protegido con Access.
 
+## Handoff Brenda 10:00
+
+Cuando una cotizacion sigue como `Pendiente de Coti. Pricing` y Brenda sigue asignada despues de las 10:00 Mexico, el mini TMS calcula quien de Monterrey debe cubrir el seguimiento durante el dia.
+
+```powershell
+npm run handoff:brenda
+```
+
+Este comando genera `work/teams-handoff-current.md` con el mensaje listo para el chat `Agents team <3` y guarda control anti duplicado en `work/reporte-automation-state.json`.
+
+Si existe `TEAMS_HANDOFF_WEBHOOK_URL`, el mismo comando envia el mensaje por Power Automate. Sin webhook, solo deja el mensaje listo para envio manual.
+
 La automatizacion real usa dos fotos privadas antes de generar el reporte:
 
 - `work/sheet-cotizaciones-snapshot.json`: lectura del Google Sheet.

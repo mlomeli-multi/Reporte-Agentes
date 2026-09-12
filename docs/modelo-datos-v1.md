@@ -21,6 +21,8 @@ Objetivo: convertir Outlook + Google Sheet + memoria local en una capa de datos 
 | `work/memoria-historica-referencias.json` | memoria local real | No | Referencias Julio/Agosto y futuras que siguen vivas |
 | `work/reporte-automation-state.json` | memoria local real | No | Ultimas corridas, ventanas y control anti duplicados |
 | `work/dashboard-runs-history.json` | historial local real | No | Registro de cada corrida generada para ver comportamiento de la automatizacion |
+| `work/teams-handoff-current.md` | mensaje operativo real | No | Ultimo mensaje de seguimiento Brenda 10:00 para Teams |
+| `work/teams-handoff-current.json` | control operativo real | No | Mismo handoff en formato estructurado para auditoria o Power Automate |
 | `work/catalogo-actores-v1.json` | catalogo privado real | No | Reglas editables para reconocer clientes, agentes, proveedores, CNEE, shipper, pricing y MULTI |
 | `dashboard/data/current.json` | foto privada generada | No | Data lista para dashboard Cloudflare |
 | `docs/data-contract-v1.example.json` | ejemplo anonimo | Si | Contrato publico para desarrollo |
@@ -237,6 +239,11 @@ Campos V1:
 | `responsable_area` | enum | No | Area ejecutiva resumida: `pricing`, `comercial`, `operacion`, `multi`, `externo`, `incierto` |
 | `responsable_equipo_reason` | string | No | Criterio legible usado para asignar el equipo responsable |
 | `responsable_equipo_confidence` | enum | No | Confianza de asignacion: `alta`, `media`, `baja` |
+| `followup_mexico_required` | boolean | No | True cuando una cotizacion de Brenda sigue pendiente real de Pricing despues de las 10:00 Mexico |
+| `followup_mexico_owner` | string | No | Persona de Monterrey asignada para dar seguimiento durante el dia: Luz, Joss o Rodrigo |
+| `followup_mexico_status` | enum | No | `no_aplica`, `en_turno_brenda`, `handoff_mexico_activo` o `compartida_mx` |
+| `followup_mexico_reason` | string | No | Criterio legible de la asignacion o de por que no aplica |
+| `followup_mexico_cutoff_local` | string | No | Corte operativo local, por ahora `10:00 America/Mexico_City` |
 | `accion_sugerida` | string | Si | Siguiente paso |
 | `lectura_confianza` | enum | Si | `accion_confiable`, `accion_probable`, `validar_antes`, `sin_evidencia_suficiente` o `monitoreo_controlado` |
 | `lectura_confianza_reason` | string | No | Explicacion breve de la confianza de lectura |
@@ -277,6 +284,16 @@ Regla dura de estatus Sheet V1:
 - `No Cotizado por Pricing` cuenta como no cotizada, no como pendiente ni como cotizada.
 - `Cerrado` cuenta como cerrada; si trae numero de embarque se considera cierre con SAM.
 - Los totales deben separar `pendiente_pricing_sheet` de `pricing_pendiente_real`: el primero viene del Sheet, el segundo descuenta evidencia de Outlook como pricing respondido, duda del cliente, respuesta enviada o espera de agente/cliente.
+
+Regla de handoff Mexico V1:
+
+- Si una cotizacion sigue como pendiente real de Pricing y el usuario del Sheet incluye a Brenda, antes de las 10:00 Mexico queda en `en_turno_brenda`.
+- A partir de las 10:00 Mexico, si Brenda no la ha mandado o el estado no cambio, el dashboard deriva un `followup_mexico_owner` para seguimiento local durante el dia.
+- Si la cuenta esta compartida en el Sheet con Luz, Joss o Rodrigo, se asigna esa persona compartida.
+- Para cuentas compartidas de Brenda, manda el cliente antes que la rotacion: WORLD CARGO, LOXSON, BSI, BAND SUPPLY CHAIN, REAL LOGISTICS y AIRMAX van a Luz; S GROUP CHINA y BRAVE INTERNATIONAL van a Joss; NSG LOG, TORRESTIR, SKY INTERNATIONAL, LKC LOGISTICS, TIME LOGISTICS y GALAXY FREIGHT van a Rodrigo.
+- Si solo aparece Brenda, se asigna una persona de Monterrey por rotacion estable basada en la referencia/cliente, para que no cambie aleatoriamente entre corridas.
+- Esta regla puede editar Google Sheet solo con autorizacion explicita: columna `Usuario`, filas con `Pendiente de Coti. Pricing`, usuario Brenda y despues de las 10:00 Mexico. No toca estatus, embarque, referencia ni feedback.
+- El mensaje de Teams se agrupa por responsable Mexico y se envia al chat `Agents team <3`. Si no hay webhook configurado, se genera en `work/teams-handoff-current.md` para envio manual.
 
 Etapas comerciales V1:
 
@@ -421,6 +438,20 @@ Campos V1:
 | `alertas` | array object | Si | Alertas accionables con nivel, detalle y destino de filtro |
 | `prioridades` | array object | Si | Referencias principales ordenadas por urgencia |
 | `reporte` | object | Si | Borrador estructurado para copiar o enviar despues |
+| `teams_handoff` | object | No | Mensaje y grupos para seguimiento Brenda 10:00 en Teams |
+
+Campos de `teams_handoff`:
+
+| Campo | Tipo | Requerido | Descripcion |
+| --- | --- | --- | --- |
+| `chat_name` | string | Si | Chat destino, por ahora `Agents team <3` |
+| `has_items` | boolean | Si | True cuando hay cotizaciones que requieren handoff |
+| `item_count` | number | Si | Total de cotizaciones incluidas |
+| `owner_count` | number | Si | Total de responsables Mexico con pendientes |
+| `groups` | array object | Si | Items agrupados por Luz, Joss o Rodrigo |
+| `message` | string | Si | Texto listo para Teams |
+| `message_hash` | string | No | Huella para evitar duplicados diarios |
+| `delivery_policy` | string | No | Regla legible de envio |
 
 Campos de `alertas`:
 

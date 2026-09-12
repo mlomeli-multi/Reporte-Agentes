@@ -13,6 +13,7 @@
     "report:auto": "node scripts/run-report-automation.js --type=auto",
     "report:auto:deploy": "node scripts/run-report-automation.js --type=auto --deploy",
     "report:deploy": "node scripts/run-report-automation.js --type=manual --deploy",
+    "handoff:brenda": "node scripts/run-brenda-handoff.js",
     "serve:dashboard": "node scripts/serve-dashboard.js",
     "deploy:cloudflare": "powershell -ExecutionPolicy Bypass -File scripts/deploy-cloudflare.ps1 -AccessReady"
   },
